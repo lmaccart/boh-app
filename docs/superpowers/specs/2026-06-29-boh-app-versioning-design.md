@@ -36,7 +36,7 @@
 |-------|-------------|
 | `users` | id, email, name, avatar_url, role (user/admin/tarryn) |
 | `courses` | id, title, start_date |
-| `course_whitelist` | user_id, course_id |
+| `course_whitelist` | user_id, course_ids |
 | `course_sections` | id, course_id, type (welcome/nsr/meditation/module/live), title, order, go_live_date |
 | `lessons` | id, section_id, title, video_url, order |
 | `lesson_resources` | id, lesson_id, type (pdf/audio), url, title |

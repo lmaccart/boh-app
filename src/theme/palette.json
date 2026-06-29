@@ -1,0 +1,26 @@
+{
+  "background": "#FBF7F2",
+  "foreground": "#2D2A26",
+  "card": { "DEFAULT": "#FFFFFF", "foreground": "#2D2A26" },
+  "popover": { "DEFAULT": "#FFFFFF", "foreground": "#2D2A26" },
+  "muted": { "DEFAULT": "#F0E9E0", "foreground": "#7A7268" },
+  "primary": { "DEFAULT": "#C26B4A", "foreground": "#FFFFFF" },
+  "secondary": { "DEFAULT": "#5B7B6F", "foreground": "#FFFFFF" },
+  "accent": { "DEFAULT": "#E8B04B", "foreground": "#2D2A26" },
+  "destructive": { "DEFAULT": "#C0452F", "foreground": "#FFFFFF" },
+  "border": "#E5DBCF",
+  "input": "#E5DBCF",
+  "ring": "#C26B4A",
+  "brand": {
+    "50": "#FBF1EC",
+    "100": "#F6DFD3",
+    "200": "#EDC0AC",
+    "300": "#E0997A",
+    "400": "#D17F5C",
+    "500": "#C26B4A",
+    "600": "#A8543A",
+    "700": "#85412E",
+    "800": "#5E2E20",
+    "900": "#3D1E15"
+  }
+}

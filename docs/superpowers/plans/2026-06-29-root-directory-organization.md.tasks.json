@@ -1,0 +1,26 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-29-root-directory-organization.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 1: Inline jest and prettier configs into package.json",
+      "status": "pending",
+      "description": "**Goal:** Remove `jest.config.js` and `.prettierrc` by merging their content into `package.json`.\n\n**Files:**\n- Modify: `package.json`\n- Delete: `jest.config.js`\n- Delete: `.prettierrc`\n\n**Acceptance Criteria:**\n- [ ] `package.json` contains a `\"jest\"` key with `preset` and `setupFilesAfterEnv`\n- [ ] `package.json` contains a `\"prettier\"` key with all five formatting options\n- [ ] `jest.config.js` is deleted\n- [ ] `.prettierrc` is deleted\n- [ ] `npm test` runs without error\n\n**Verify:** `npm test -- --passWithNoTests` → exits 0\n\n```json:metadata\n{\"files\": [\"package.json\"], \"verifyCommand\": \"npm test -- --passWithNoTests\", \"acceptanceCriteria\": [\"package.json contains jest key\", \"package.json contains prettier key\", \"jest.config.js deleted\", \".prettierrc deleted\"], \"modelTier\": \"mechanical\"}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 2: Move global.css to src/",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** Relocate `global.css` into `src/` and update the import in `app/_layout.tsx`.\n\n**Files:**\n- Move: `global.css` → `src/global.css`\n- Modify: `app/_layout.tsx` line 1\n\n**Acceptance Criteria:**\n- [ ] `global.css` no longer exists at root\n- [ ] `src/global.css` exists with identical content\n- [ ] `app/_layout.tsx` imports from `\"@/global.css\"`\n- [ ] App builds without error\n\n**Verify:** `npx expo export --platform ios 2>&1 | tail -5` → no CSS import errors\n\n```json:metadata\n{\"files\": [\"src/global.css\", \"app/_layout.tsx\"], \"verifyCommand\": \"npx expo export --platform ios 2>&1 | tail -5\", \"acceptanceCriteria\": [\"global.css removed from root\", \"src/global.css exists\", \"_layout.tsx imports @/global.css\"], \"modelTier\": \"mechanical\"}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 3: Move nativewind-env.d.ts to src/",
+      "status": "pending",
+      "blockedBy": [1],
+      "description": "**Goal:** Relocate `nativewind-env.d.ts` into `src/` and update `tsconfig.json`.\n\n**Files:**\n- Move: `nativewind-env.d.ts` → `src/nativewind-env.d.ts`\n- Modify: `tsconfig.json`\n\n**Acceptance Criteria:**\n- [ ] `nativewind-env.d.ts` no longer exists at root\n- [ ] `src/nativewind-env.d.ts` exists\n- [ ] `tsconfig.json` include array no longer contains bare `\"nativewind-env.d.ts\"` entry\n- [ ] `npm run typecheck` exits 0\n\n**Verify:** `npm run typecheck` → exits 0\n\n```json:metadata\n{\"files\": [\"src/nativewind-env.d.ts\", \"tsconfig.json\"], \"verifyCommand\": \"npm run typecheck\", \"acceptanceCriteria\": [\"nativewind-env.d.ts removed from root\", \"src/nativewind-env.d.ts exists\", \"tsconfig.json updated\", \"typecheck passes\"], \"modelTier\": \"mechanical\"}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-29T00:00:00Z"
+}
