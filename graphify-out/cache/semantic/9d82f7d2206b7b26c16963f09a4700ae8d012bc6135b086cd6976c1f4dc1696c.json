@@ -1,0 +1,1 @@
+{"nodes": [{"id": "migrations_storage_buckets", "label": "Storage Buckets - community-media and avatars", "file_type": "code", "source_file": "supabase/migrations/20260629000002_storage.sql", "source_location": "6", "source_url": null, "captured_at": null, "author": null, "contributor": null}], "edges": [], "hyperedges": []}

@@ -9,13 +9,37 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.thebizofhappiness.app"
+      "bundleIdentifier": "com.thebizofhappiness.app",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow access to your photos so you can share images and videos in the community.",
+        "NSCameraUsageDescription": "Allow access to your camera so you can capture photos and videos to share in the community."
+      }
     },
     "android": {
       "package": "com.thebizofhappiness.app",
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "permissions": ["CAMERA", "READ_MEDIA_IMAGES", "READ_MEDIA_VIDEO"]
     },
-    "plugins": ["expo-router", "expo-status-bar"],
+    "plugins": [
+      "expo-router",
+      "expo-status-bar",
+      "expo-video",
+      "expo-audio",
+      "expo-web-browser",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow access to your photos so you can share images and videos in the community.",
+          "cameraPermission": "Allow access to your camera so you can capture photos and videos to share in the community."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "color": "#C26B4A"
+        }
+      ]
+    ],
     "experiments": {
       "tsconfigPaths": true
     }

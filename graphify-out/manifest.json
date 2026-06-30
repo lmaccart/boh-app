@@ -1,0 +1,482 @@
+{
+  "/Users/leif/Documents/rice/projects/boh/boh-app/.claude/settings.local.json": {
+    "mtime": 1782775124.007489,
+    "ast_hash": "abdcbdac4d1afcbf9c3e6c908a134f7d",
+    "semantic_hash": "abdcbdac4d1afcbf9c3e6c908a134f7d"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/.codex/hooks.json": {
+    "mtime": 1782691125.639387,
+    "ast_hash": "bbbc91bded87461fc2664e49fabd542d",
+    "semantic_hash": "bbbc91bded87461fc2664e49fabd542d"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/.cursor/hooks.json": {
+    "mtime": 1782691125.6395676,
+    "ast_hash": "a17a0ce9b960b4ce2c58a1ed592716c7",
+    "semantic_hash": "a17a0ce9b960b4ce2c58a1ed592716c7"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/.impeccable/config.local.json": {
+    "mtime": 1782691121.1948438,
+    "ast_hash": "d9242cdb0e8a2f25b7645e2a4ceead1c",
+    "semantic_hash": "d9242cdb0e8a2f25b7645e2a4ceead1c"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/.impeccable/hook.cache.json": {
+    "mtime": 1782780587.2969482,
+    "ast_hash": "fdba5857f86eef74ad5c9f75d022c735",
+    "semantic_hash": "fdba5857f86eef74ad5c9f75d022c735"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app.json": {
+    "mtime": 1782775089.2309487,
+    "ast_hash": "31de714be6a1535485a0c91bd12b5949",
+    "semantic_hash": "31de714be6a1535485a0c91bd12b5949"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(auth)/_layout.tsx": {
+    "mtime": 1782765523.7092383,
+    "ast_hash": "536f0e255f2b00b78dd8a35e9e3cd9a5",
+    "semantic_hash": "536f0e255f2b00b78dd8a35e9e3cd9a5"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(auth)/login.tsx": {
+    "mtime": 1782765534.3817472,
+    "ast_hash": "4e48d5d36a8b9c4dc92d1e27eeacaa20",
+    "semantic_hash": "4e48d5d36a8b9c4dc92d1e27eeacaa20"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/_layout.tsx": {
+    "mtime": 1782765557.4561634,
+    "ast_hash": "98474b18ed7989d4311893a79c531a00",
+    "semantic_hash": "98474b18ed7989d4311893a79c531a00"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/community/[postId].tsx": {
+    "mtime": 1782775910.58813,
+    "ast_hash": "9849e74f0b4b89187e5d9f4248ff8387",
+    "semantic_hash": "9849e74f0b4b89187e5d9f4248ff8387"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/community/_layout.tsx": {
+    "mtime": 1782765562.3166604,
+    "ast_hash": "806398839d23f9dc2608d18eef97b8b6",
+    "semantic_hash": "806398839d23f9dc2608d18eef97b8b6"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/community/dms/[userId].tsx": {
+    "mtime": 1782775989.0815551,
+    "ast_hash": "f364f869d1a6b50c655b6243954bcb3e",
+    "semantic_hash": "f364f869d1a6b50c655b6243954bcb3e"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/community/dms/index.tsx": {
+    "mtime": 1782775972.6734924,
+    "ast_hash": "f0259d7629d34a670af2759ea5b943fd",
+    "semantic_hash": "f0259d7629d34a670af2759ea5b943fd"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/community/index.tsx": {
+    "mtime": 1782776015.6893737,
+    "ast_hash": "f2f7a48c54df048437b2ef84f3695ecd",
+    "semantic_hash": "f2f7a48c54df048437b2ef84f3695ecd"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/community/new.tsx": {
+    "mtime": 1782775932.944848,
+    "ast_hash": "1dd660d36f600f24a491a273ee1816b6",
+    "semantic_hash": "1dd660d36f600f24a491a273ee1816b6"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/courses/[courseId].tsx": {
+    "mtime": 1782775401.0433629,
+    "ast_hash": "5ea4131a6c74ace6f61d6a37ca079fe9",
+    "semantic_hash": "5ea4131a6c74ace6f61d6a37ca079fe9"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/courses/_layout.tsx": {
+    "mtime": 1782765565.2886305,
+    "ast_hash": "04e8d99e370dc0dc88297db3492769f8",
+    "semantic_hash": "04e8d99e370dc0dc88297db3492769f8"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/courses/index.tsx": {
+    "mtime": 1782775373.1831012,
+    "ast_hash": "5c603a075017304c1a4aa4db67d0bee5",
+    "semantic_hash": "5c603a075017304c1a4aa4db67d0bee5"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/courses/lesson/[lessonId].tsx": {
+    "mtime": 1782775439.833983,
+    "ast_hash": "00061c221f18468c6f72de27b7c590c0",
+    "semantic_hash": "00061c221f18468c6f72de27b7c590c0"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/index.tsx": {
+    "mtime": 1782775220.5887682,
+    "ast_hash": "00798e6abcc5346df6c9e32487fc5d5e",
+    "semantic_hash": "00798e6abcc5346df6c9e32487fc5d5e"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/resources/_layout.tsx": {
+    "mtime": 1782765567.818063,
+    "ast_hash": "7ee83f7ed9b7c720fdd701f0cbf59d3a",
+    "semantic_hash": "7ee83f7ed9b7c720fdd701f0cbf59d3a"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/(tabs)/resources/index.tsx": {
+    "mtime": 1782776095.573257,
+    "ast_hash": "b90d8a77a45007b7080fac3bd3efbbd5",
+    "semantic_hash": "b90d8a77a45007b7080fac3bd3efbbd5"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/_layout.tsx": {
+    "mtime": 1782779723.6510913,
+    "ast_hash": "4bba6d9f263dcabff572c230b75dd737",
+    "semantic_hash": "4bba6d9f263dcabff572c230b75dd737"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/app/settings.tsx": {
+    "mtime": 1782775231.1431396,
+    "ast_hash": "b68dbf842075835b88cfbaaeba909b48",
+    "semantic_hash": "b68dbf842075835b88cfbaaeba909b48"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/babel.config.js": {
+    "mtime": 1782764815.810486,
+    "ast_hash": "4af6bb618c29e2433131b9757c5abc96",
+    "semantic_hash": "4af6bb618c29e2433131b9757c5abc96"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/plans/2026-06-29-m5-push-notifications.md.tasks.json": {
+    "mtime": 1782779438.8937664,
+    "ast_hash": "8e4d926c360c30a59b44b251ba3fcd2e",
+    "semantic_hash": "8e4d926c360c30a59b44b251ba3fcd2e"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/plans/2026-06-29-root-directory-organization.md.tasks.json": {
+    "mtime": 1782770540.5496895,
+    "ast_hash": "1eef1cd58b736507c664885942155468",
+    "semantic_hash": "1eef1cd58b736507c664885942155468"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/eas.json": {
+    "mtime": 1782767793.8470984,
+    "ast_hash": "82f03b4d01ab000174624dd7ff06f742",
+    "semantic_hash": "82f03b4d01ab000174624dd7ff06f742"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/eslint.config.js": {
+    "mtime": 1782764867.7257147,
+    "ast_hash": "d3d9e143df2fef486fcf67f12c13b07b",
+    "semantic_hash": "d3d9e143df2fef486fcf67f12c13b07b"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/jest-setup.ts": {
+    "mtime": 1782764871.4976034,
+    "ast_hash": "f8c6c928e9e9e9b31338c5a8934fa1c5",
+    "semantic_hash": "f8c6c928e9e9e9b31338c5a8934fa1c5"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/metro.config.js": {
+    "mtime": 1782764817.3113728,
+    "ast_hash": "887df1d17a96b9d0aa6144879f079d33",
+    "semantic_hash": "887df1d17a96b9d0aa6144879f079d33"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/nativewind-env.d.ts": {
+    "mtime": 1782775098.6599214,
+    "ast_hash": "78976282200df9088b36adfa2efdb752",
+    "semantic_hash": "78976282200df9088b36adfa2efdb752"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/package.json": {
+    "mtime": 1782779774.8224492,
+    "ast_hash": "69347a6e9100d15f56abada2af558c14",
+    "semantic_hash": "69347a6e9100d15f56abada2af558c14"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/announcements.ts": {
+    "mtime": 1782774867.3531084,
+    "ast_hash": "53505a94923efc07aef0e22446294ce8",
+    "semantic_hash": "53505a94923efc07aef0e22446294ce8"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/community.ts": {
+    "mtime": 1782775741.9569778,
+    "ast_hash": "df59fe2b81f18db56fc1caa942cf2733",
+    "semantic_hash": "df59fe2b81f18db56fc1caa942cf2733"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/courses.ts": {
+    "mtime": 1782774816.060055,
+    "ast_hash": "d960093889ed1bcf08890eebcb961184",
+    "semantic_hash": "d960093889ed1bcf08890eebcb961184"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/favorites.ts": {
+    "mtime": 1782776061.6592839,
+    "ast_hash": "1a431b749f172bc7658de3d3e3271326",
+    "semantic_hash": "1a431b749f172bc7658de3d3e3271326"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/index.ts": {
+    "mtime": 1782776069.3408763,
+    "ast_hash": "5ac03e5733083257d9c3a0d2c2115d36",
+    "semantic_hash": "5ac03e5733083257d9c3a0d2c2115d36"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/keys.ts": {
+    "mtime": 1782774806.7299113,
+    "ast_hash": "6b082222ea730f457d72655a30f873eb",
+    "semantic_hash": "6b082222ea730f457d72655a30f873eb"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/lessons.ts": {
+    "mtime": 1782774824.340238,
+    "ast_hash": "2ead90f15d8d40afa4156f4347d68187",
+    "semantic_hash": "2ead90f15d8d40afa4156f4347d68187"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/messages.ts": {
+    "mtime": 1782775757.8826127,
+    "ast_hash": "76fde5613a01aab3641a24665c79dcfc",
+    "semantic_hash": "76fde5613a01aab3641a24665c79dcfc"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/notifications.ts": {
+    "mtime": 1782774914.9346778,
+    "ast_hash": "7d23e9d11886016bbe32dafd339d10bf",
+    "semantic_hash": "7d23e9d11886016bbe32dafd339d10bf"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/profiles.ts": {
+    "mtime": 1782775709.8388479,
+    "ast_hash": "8829044e03a4c0d230506d2f7bf4ef3e",
+    "semantic_hash": "8829044e03a4c0d230506d2f7bf4ef3e"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/progress.ts": {
+    "mtime": 1782774842.9773786,
+    "ast_hash": "c1f838efb9ff71a45bce1d398cb6d285",
+    "semantic_hash": "c1f838efb9ff71a45bce1d398cb6d285"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/realtime.ts": {
+    "mtime": 1782775726.8922884,
+    "ast_hash": "15826e0d49ffc099f7c52cbecfc76a0f",
+    "semantic_hash": "15826e0d49ffc099f7c52cbecfc76a0f"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/api/types.ts": {
+    "mtime": 1782775765.8358629,
+    "ast_hash": "981ed8cafa049c8da08ddc0c52847d3b",
+    "semantic_hash": "981ed8cafa049c8da08ddc0c52847d3b"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/PlaceholderScreen.tsx": {
+    "mtime": 1782765554.227496,
+    "ast_hash": "99fba6a3300631556802275f82d50100",
+    "semantic_hash": "99fba6a3300631556802275f82d50100"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/PushRegistrar.test.tsx": {
+    "mtime": 1782779678.9343536,
+    "ast_hash": "2dd82cdf52dad1a2f5a2251e7fcf52f5",
+    "semantic_hash": "2dd82cdf52dad1a2f5a2251e7fcf52f5"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/PushRegistrar.tsx": {
+    "mtime": 1782779695.2109468,
+    "ast_hash": "465211a9cb43983b31b673ce898e8e65",
+    "semantic_hash": "465211a9cb43983b31b673ce898e8e65"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/community/AuthorRow.tsx": {
+    "mtime": 1782775811.4530697,
+    "ast_hash": "f85670e9d0b6fb870b1fed3a9af26544",
+    "semantic_hash": "f85670e9d0b6fb870b1fed3a9af26544"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/community/MentionText.tsx": {
+    "mtime": 1782775803.6582458,
+    "ast_hash": "13ad64f81c2942f02f988f215407c26f",
+    "semantic_hash": "13ad64f81c2942f02f988f215407c26f"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/media/AudioPlayer.tsx": {
+    "mtime": 1782775530.90892,
+    "ast_hash": "90b238b8610e1b4adf2a2c58275db36b",
+    "semantic_hash": "90b238b8610e1b4adf2a2c58275db36b"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/media/VideoPlayer.tsx": {
+    "mtime": 1782775549.5230403,
+    "ast_hash": "0def06d5266879ca547bb25b8f374594",
+    "semantic_hash": "0def06d5266879ca547bb25b8f374594"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Avatar.tsx": {
+    "mtime": 1782765084.3098893,
+    "ast_hash": "4ad98f3bc7ce2b42b06d72b6ee9871bd",
+    "semantic_hash": "4ad98f3bc7ce2b42b06d72b6ee9871bd"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Badge.tsx": {
+    "mtime": 1782765091.3038168,
+    "ast_hash": "885dbe401e9cb3dc7a6786f5e6930d3f",
+    "semantic_hash": "885dbe401e9cb3dc7a6786f5e6930d3f"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Button.test.tsx": {
+    "mtime": 1782766853.1066644,
+    "ast_hash": "351875055e580c5c5d5c5ed5eedfa6e0",
+    "semantic_hash": "351875055e580c5c5d5c5ed5eedfa6e0"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Button.tsx": {
+    "mtime": 1782765074.6150243,
+    "ast_hash": "9f56c7f14646ce417f54ebd0c8029dff",
+    "semantic_hash": "9f56c7f14646ce417f54ebd0c8029dff"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Card.tsx": {
+    "mtime": 1782765079.7806547,
+    "ast_hash": "7d552923166ddc0e7c0ac6ea13f073c6",
+    "semantic_hash": "7d552923166ddc0e7c0ac6ea13f073c6"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/EmptyState.tsx": {
+    "mtime": 1782774993.9669368,
+    "ast_hash": "944b93e36e4686d74377507a0697b127",
+    "semantic_hash": "944b93e36e4686d74377507a0697b127"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Header.tsx": {
+    "mtime": 1782765086.8512306,
+    "ast_hash": "1a59901c8b5e00b5791ac498f8740db4",
+    "semantic_hash": "1a59901c8b5e00b5791ac498f8740db4"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/IconButton.tsx": {
+    "mtime": 1782774988.0302532,
+    "ast_hash": "a1fc195cbdd8378b97e6951aef5ee3a0",
+    "semantic_hash": "a1fc195cbdd8378b97e6951aef5ee3a0"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Input.tsx": {
+    "mtime": 1782765078.3803658,
+    "ast_hash": "086b0e6688e23be5a125fe8090da2069",
+    "semantic_hash": "086b0e6688e23be5a125fe8090da2069"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/ListItem.tsx": {
+    "mtime": 1782775002.0804827,
+    "ast_hash": "cf3a1e2ece43047afb9bb643cba53daf",
+    "semantic_hash": "cf3a1e2ece43047afb9bb643cba53daf"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Modal.tsx": {
+    "mtime": 1782775016.1055684,
+    "ast_hash": "ce04d57cc494517680d4a5195ee2d041",
+    "semantic_hash": "ce04d57cc494517680d4a5195ee2d041"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Skeleton.tsx": {
+    "mtime": 1782775008.420739,
+    "ast_hash": "1a50396311f0ed36e82b3819dd1320c8",
+    "semantic_hash": "1a50396311f0ed36e82b3819dd1320c8"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/Spinner.tsx": {
+    "mtime": 1782774981.7545893,
+    "ast_hash": "cd5b981d99a77e616871e60cf8921afd",
+    "semantic_hash": "cd5b981d99a77e616871e60cf8921afd"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/components/ui/index.ts": {
+    "mtime": 1782775089.2325904,
+    "ast_hash": "0f6fc8bf457dd46e26289a8fd39717ad",
+    "semantic_hash": "0f6fc8bf457dd46e26289a8fd39717ad"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/constants/text.ts": {
+    "mtime": 1782775209.4800363,
+    "ast_hash": "940f037d74164e6211c1200488706cac",
+    "semantic_hash": "940f037d74164e6211c1200488706cac"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/cn.test.ts": {
+    "mtime": 1782765600.6033618,
+    "ast_hash": "3a9545b2c54e6607d8001f8a3c3d8d2e",
+    "semantic_hash": "3a9545b2c54e6607d8001f8a3c3d8d2e"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/cn.ts": {
+    "mtime": 1782765028.3129253,
+    "ast_hash": "e2ac440e2cdfc6d6739e950532db4b8a",
+    "semantic_hash": "e2ac440e2cdfc6d6739e950532db4b8a"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/date.ts": {
+    "mtime": 1782775186.0027215,
+    "ast_hash": "c7aaa1db4551f2fb35cf91cfe00ac9a4",
+    "semantic_hash": "c7aaa1db4551f2fb35cf91cfe00ac9a4"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/media.ts": {
+    "mtime": 1782775832.820301,
+    "ast_hash": "5820943bcea41e226cb1408abc3e04d4",
+    "semantic_hash": "5820943bcea41e226cb1408abc3e04d4"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/mentions.ts": {
+    "mtime": 1782775795.024921,
+    "ast_hash": "b6a74a36f4a7e15966b34f7b6ce75d16",
+    "semantic_hash": "b6a74a36f4a7e15966b34f7b6ce75d16"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/push.ts": {
+    "mtime": 1782776156.8091726,
+    "ast_hash": "6f975ca2e9b411165f80944b42ec11dc",
+    "semantic_hash": "6f975ca2e9b411165f80944b42ec11dc"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/queryClient.ts": {
+    "mtime": 1782774754.4096248,
+    "ast_hash": "8a3440978dd6daaef00e167b7151d6f7",
+    "semantic_hash": "8a3440978dd6daaef00e167b7151d6f7"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/supabase.ts": {
+    "mtime": 1782765191.8422532,
+    "ast_hash": "22fc33682be4670c59f9179146368bd3",
+    "semantic_hash": "22fc33682be4670c59f9179146368bd3"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/lib/upload.ts": {
+    "mtime": 1782774964.6879141,
+    "ast_hash": "7c0bffb51bc3f33d7cc171e00aaf99da",
+    "semantic_hash": "7c0bffb51bc3f33d7cc171e00aaf99da"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/providers/auth.tsx": {
+    "mtime": 1782765517.946869,
+    "ast_hash": "17104f9982112a0240ce3c884a3f544a",
+    "semantic_hash": "17104f9982112a0240ce3c884a3f544a"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/theme/colors.ts": {
+    "mtime": 1782765006.0066717,
+    "ast_hash": "208261fcceed55aedbe0f3dc880e1ca8",
+    "semantic_hash": "208261fcceed55aedbe0f3dc880e1ca8"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/theme/palette.json": {
+    "mtime": 1782765000.1469066,
+    "ast_hash": "3c8e63287c630c391dda902e53ad6075",
+    "semantic_hash": "3c8e63287c630c391dda902e53ad6075"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/src/types/database.types.ts": {
+    "mtime": 1782775700.657299,
+    "ast_hash": "6ec257b9aeead95536929ddba8caf772",
+    "semantic_hash": "6ec257b9aeead95536929ddba8caf772"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/supabase/functions/notify/index.ts": {
+    "mtime": 1782779861.581802,
+    "ast_hash": "c6705f78130cc776031bcb0a49f839ad",
+    "semantic_hash": "c6705f78130cc776031bcb0a49f839ad"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/supabase/functions/reach-out-email/index.ts": {
+    "mtime": 1782779869.4222383,
+    "ast_hash": "34955daa6ae2f5fac2d7513be37a7ce7",
+    "semantic_hash": "34955daa6ae2f5fac2d7513be37a7ce7"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/supabase/migrations/20260629000001_initial_schema.sql": {
+    "mtime": 1782765252.5044315,
+    "ast_hash": "9faabf4e64d27c54ff4c60afff35f544",
+    "semantic_hash": "9faabf4e64d27c54ff4c60afff35f544"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/supabase/migrations/20260629000002_storage.sql": {
+    "mtime": 1782774942.0916069,
+    "ast_hash": "35b0c8470c2b0d06b00563973158bc36",
+    "semantic_hash": "35b0c8470c2b0d06b00563973158bc36"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/supabase/migrations/20260629000003_community.sql": {
+    "mtime": 1782775693.4928637,
+    "ast_hash": "e142d4d05aa628669181bd6fabb3d960",
+    "semantic_hash": "e142d4d05aa628669181bd6fabb3d960"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/tailwind.config.js": {
+    "mtime": 1782765009.0126002,
+    "ast_hash": "a430130738de499b48a679847e54c3d1",
+    "semantic_hash": "a430130738de499b48a679847e54c3d1"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/tsconfig.json": {
+    "mtime": 1782767479.2843027,
+    "ast_hash": "ebcc4a921ebf6fd048cb4e6f0861d878",
+    "semantic_hash": "ebcc4a921ebf6fd048cb4e6f0861d878"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/CLAUDE.md": {
+    "mtime": 1782760118.5615213,
+    "ast_hash": "8bdec0ade1707fb810f5671b0752a378",
+    "semantic_hash": "8bdec0ade1707fb810f5671b0752a378"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/CONFIGURE_RESEND.md": {
+    "mtime": 1782780064.2088861,
+    "ast_hash": "d3dd7e8d17e7e51cd4638e8a1e2da1bd",
+    "semantic_hash": "d3dd7e8d17e7e51cd4638e8a1e2da1bd"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/REQUIREMENTS.md": {
+    "mtime": 1782760049.3177621,
+    "ast_hash": "e2179d2f64f59e09519d83626fe1ac7c",
+    "semantic_hash": "e2179d2f64f59e09519d83626fe1ac7c"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/plans/2026-06-29-m5-push-notifications.md": {
+    "mtime": 1782779407.9292438,
+    "ast_hash": "31897a86f88c3b28a3f723e819038d28",
+    "semantic_hash": "31897a86f88c3b28a3f723e819038d28"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/plans/2026-06-29-root-directory-organization.md": {
+    "mtime": 1782770523.2580328,
+    "ast_hash": "ab5b205c29b16586a2feedfcd6820d3a",
+    "semantic_hash": "ab5b205c29b16586a2feedfcd6820d3a"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/specs/2026-06-29-boh-app-versioning-design.md": {
+    "mtime": 1782762535.1944602,
+    "ast_hash": "2bfef2b1456e257bfbc325f247526f66",
+    "semantic_hash": "2bfef2b1456e257bfbc325f247526f66"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/specs/2026-06-29-m5-push-notifications-design.md": {
+    "mtime": 1782778939.0772576,
+    "ast_hash": "bda339466e2d08c6e3daa23bb15851ed",
+    "semantic_hash": "bda339466e2d08c6e3daa23bb15851ed"
+  },
+  "/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/specs/2026-06-29-root-directory-organization-design.md": {
+    "mtime": 1782770473.1880984,
+    "ast_hash": "902c7d550f669a0eabea75765dd4b3df",
+    "semantic_hash": "902c7d550f669a0eabea75765dd4b3df"
+  }
+}

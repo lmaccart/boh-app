@@ -1,0 +1,8 @@
+/Users/leif/Documents/rice/projects/boh/boh-app/CLAUDE.md
+/Users/leif/Documents/rice/projects/boh/boh-app/CONFIGURE_RESEND.md
+/Users/leif/Documents/rice/projects/boh/boh-app/REQUIREMENTS.md
+/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/plans/2026-06-29-m5-push-notifications.md
+/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/plans/2026-06-29-root-directory-organization.md
+/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/specs/2026-06-29-boh-app-versioning-design.md
+/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/specs/2026-06-29-m5-push-notifications-design.md
+/Users/leif/Documents/rice/projects/boh/boh-app/docs/superpowers/specs/2026-06-29-root-directory-organization-design.md

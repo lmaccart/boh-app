@@ -498,7 +498,15 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profiles: {
+        Row: {
+          id: string
+          name: string | null
+          avatar_url: string | null
+          role: Database["public"]["Enums"]["user_role"]
+        }
+        Relationships: []
+      }
     }
     Functions: {
       is_staff: { Args: never; Returns: boolean }
