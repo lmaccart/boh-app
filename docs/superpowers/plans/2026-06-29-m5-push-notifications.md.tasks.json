@@ -1,0 +1,33 @@
+{
+  "planPath": "docs/superpowers/plans/2026-06-29-m5-push-notifications.md",
+  "tasks": [
+    {
+      "id": 0,
+      "subject": "Task 0: PushRegistrar Component",
+      "status": "pending",
+      "description": "**Goal:** A null-rendering component that registers the device's Expo push token on login and persists it to Supabase.\n\n**Files:**\n- Create: `src/components/PushRegistrar.tsx`\n- Create: `src/components/PushRegistrar.test.tsx`\n- Modify: `app/_layout.tsx`\n\n**Acceptance Criteria:**\n- [ ] `PushRegistrar` renders null (no visible UI)\n- [ ] On mount, calls `registerForPushNotifications()` from `src/lib/push`\n- [ ] If a token is returned, calls `useRegisterPushToken().mutate({ token, platform })`\n- [ ] If permission is denied (returns `null`), does nothing silently\n- [ ] Component is mounted inside `RootNavigator` only when `session` is non-null\n- [ ] `npm test` passes\n\n**Verify:** `npm test -- --testPathPattern=PushRegistrar` → all 3 tests pass\n\n```json:metadata\n{\"files\": [\"src/components/PushRegistrar.tsx\", \"src/components/PushRegistrar.test.tsx\", \"app/_layout.tsx\"], \"verifyCommand\": \"npm test -- --testPathPattern=PushRegistrar\", \"acceptanceCriteria\": [\"PushRegistrar renders null\", \"calls registerForPushNotifications on mount\", \"mutates with token when granted\", \"does nothing when permission denied\", \"mounted only when session non-null\", \"npm test passes\"], \"modelTier\": \"standard\"}\n```"
+    },
+    {
+      "id": 1,
+      "subject": "Task 1: notify Edge Function",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** A Supabase Edge Function that sends Expo push notifications — to enrolled users when an admin/Tarryn posts in the community, and to the recipient on any new DM.\n\n**Files:**\n- Create: `supabase/functions/notify/index.ts`\n\n**Acceptance Criteria:**\n- [ ] On community_posts INSERT by non-admin: returns 200, sends no push\n- [ ] On community_posts INSERT by admin/tarryn with course_id=null: pushes to all users\n- [ ] On community_posts INSERT by admin/tarryn with course_id set: pushes to whitelisted users only\n- [ ] On direct_messages INSERT: sends push to recipient's tokens with sender's name as title\n- [ ] Body truncated to 100 chars; null body becomes 'New video posted'\n- [ ] Expo push requests sent in batches of ≤ 100 tokens\n- [ ] Always returns HTTP 200\n\n**Verify:** After Task 3 deployment — post as admin, confirm push delivered. Check notify function logs in Supabase Dashboard.\n\n```json:metadata\n{\"files\": [\"supabase/functions/notify/index.ts\"], \"verifyCommand\": \"supabase functions deploy notify --no-verify-jwt\", \"acceptanceCriteria\": [\"non-admin post sends no push\", \"admin global post pushes to all users\", \"admin course post pushes to whitelisted users\", \"DM INSERT pushes to recipient\", \"body truncated to 100 chars\", \"batch size ≤ 100\", \"always returns 200\"], \"modelTier\": \"standard\"}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: reach-out-email Edge Function",
+      "status": "pending",
+      "blockedBy": [0],
+      "description": "**Goal:** A Supabase Edge Function that emails Tarryn and the support inbox when a user sends a DM to an admin or Tarryn account.\n\n**Files:**\n- Create: `supabase/functions/reach-out-email/index.ts`\n\n**Acceptance Criteria:**\n- [ ] On direct_messages INSERT where recipient role is not admin/tarryn: returns 200, sends no email\n- [ ] On direct_messages INSERT where recipient role is admin/tarryn: sends email via Resend to both tarryn@drtarrynmaccarthy.com and hereforyou@drtarrynmaccarthy.com\n- [ ] Email subject is 'New message from [Sender Name]'\n- [ ] Email body includes sender name, message text, and 'Reply in the app to respond.'\n- [ ] Always returns HTTP 200\n\n**Verify:** After Task 3 deployment — send DM to Tarryn account, confirm email arrives at both addresses.\n\n```json:metadata\n{\"files\": [\"supabase/functions/reach-out-email/index.ts\"], \"verifyCommand\": \"supabase functions deploy reach-out-email --no-verify-jwt\", \"acceptanceCriteria\": [\"non-tarryn recipient sends no email\", \"tarryn/admin recipient sends email to both addresses\", \"subject includes sender name\", \"body includes message and reply note\", \"always returns 200\"], \"modelTier\": \"standard\"}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Deploy Functions, Set Secrets, Configure Webhooks",
+      "status": "pending",
+      "blockedBy": [1, 2],
+      "description": "**Goal:** Deploy both Edge Functions, inject secrets, and wire three database webhooks so functions fire on real events.\n\n**Files:** (infrastructure configuration only — no code files)\n\n**Acceptance Criteria:**\n- [ ] supabase functions deploy notify exits 0\n- [ ] supabase functions deploy reach-out-email exits 0\n- [ ] RESEND_API_KEY and RESEND_FROM secrets are set\n- [ ] Three database webhooks active: notify-community, notify-dm, reach-out-dm\n- [ ] Admin community post delivers push to another device\n- [ ] DM to Tarryn delivers push to recipient and email to both Tarryn addresses\n\n**Verify:** Smoke test — admin posts in community (push received), user DMs Tarryn (email received at both addresses).\n\n```json:metadata\n{\"files\": [], \"verifyCommand\": \"supabase functions deploy notify --no-verify-jwt && supabase functions deploy reach-out-email --no-verify-jwt && supabase secrets list\", \"acceptanceCriteria\": [\"both functions deployed\", \"RESEND_API_KEY set\", \"RESEND_FROM set\", \"3 webhooks active\", \"push delivered on admin post\", \"email delivered on Tarryn DM\"], \"modelTier\": \"standard\"}\n```"
+    }
+  ],
+  "lastUpdated": "2026-06-29T00:00:00Z"
+}
