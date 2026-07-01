@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { supabase } from "@/lib/supabase";
 
@@ -15,11 +15,17 @@ export function useRealtimeInserts(
   const qc = useQueryClient();
   // Serialize the key so the effect re-subscribes only when it truly changes.
   const keyId = JSON.stringify(queryKey);
+  // Increment on each subscription so the channel name is always unique.
+  // This avoids the "cannot add postgres_changes callbacks after subscribe()"
+  // error that occurs when removeChannel() is async and the old channel is
+  // still registered when the next effect run tries to reuse the same name.
+  const instanceRef = useRef(0);
 
   useEffect(() => {
     if (!enabled) return;
+    const uniqueName = `${channelName}-${++instanceRef.current}`;
     const channel = supabase
-      .channel(channelName)
+      .channel(uniqueName)
       .on("postgres_changes", { event: "INSERT", schema: "public", table }, () => {
         qc.invalidateQueries({ queryKey });
       })

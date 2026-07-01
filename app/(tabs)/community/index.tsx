@@ -30,6 +30,7 @@ function FeedChips({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
+      className="flex-none"
       contentContainerClassName="gap-2 px-4 py-3"
     >
       {[{ id: null, title: text.community.globalFeed }, ...courses].map((feed) => {
@@ -40,7 +41,7 @@ function FeedChips({
             accessibilityRole="button"
             onPress={() => onSelect(feed.id)}
             className={cn(
-              "rounded-full border px-4 py-2",
+              "self-start rounded-full border px-4 py-2",
               active ? "border-primary bg-primary" : "border-border bg-card",
             )}
           >
@@ -126,14 +127,14 @@ export default function CommunityScreen() {
 
       {posts.isLoading ? (
         <Spinner fill />
+      ) : (posts.data ?? []).length === 0 ? (
+        <EmptyState icon="chatbubble-ellipses-outline" title={text.community.feedEmpty} />
       ) : (
         <FlatList
           data={posts.data ?? []}
           keyExtractor={(item) => item.id}
-          contentContainerClassName="px-4 pb-24 pt-1"
-          ListEmptyComponent={
-            <EmptyState icon="chatbubble-ellipses-outline" title={text.community.feedEmpty} />
-          }
+          style={{ flex: 1 }}
+          contentContainerClassName="grow px-4 pb-24 pt-1"
           renderItem={({ item }) => (
             <PostPreview
               post={item}

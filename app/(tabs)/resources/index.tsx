@@ -31,6 +31,7 @@ function FilterChips({ value, onChange }: { value: Filter; onChange: (f: Filter)
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
+      className="flex-none"
       contentContainerClassName="gap-2 px-4 py-3"
     >
       {options.map((opt) => {
@@ -41,7 +42,7 @@ function FilterChips({ value, onChange }: { value: Filter; onChange: (f: Filter)
             accessibilityRole="button"
             onPress={() => onChange(opt.key)}
             className={cn(
-              "rounded-full border px-4 py-2",
+              "self-start rounded-full border px-4 py-2",
               active ? "border-primary bg-primary" : "border-border bg-card",
             )}
           >
@@ -84,12 +85,14 @@ export default function ResourcesScreen() {
       <FilterChips value={filter} onChange={setFilter} />
       {isLoading ? (
         <Spinner fill />
+      ) : items.length === 0 ? (
+        <EmptyState icon="bookmark-outline" title={text.resources.empty} />
       ) : (
         <FlatList
           data={items}
           keyExtractor={(item) => item.id}
-          contentContainerClassName="px-4 pb-6"
-          ListEmptyComponent={<EmptyState icon="bookmark-outline" title={text.resources.empty} />}
+          style={{ flex: 1 }}
+          contentContainerClassName="grow px-4 pb-6"
           renderItem={({ item }) => (
             <ListItem
               className="mb-3"

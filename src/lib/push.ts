@@ -4,15 +4,19 @@ import { Platform } from "react-native";
 
 import type { DevicePlatform } from "@/api";
 
-// Show alerts/sounds while the app is foregrounded.
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowBanner: true,
-    shouldShowList: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+// setNotificationHandler requires the native module — guard against Expo Go / web.
+try {
+  Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+      shouldShowBanner: true,
+      shouldShowList: true,
+      shouldPlaySound: true,
+      shouldSetBadge: false,
+    }),
+  });
+} catch {
+  // Native push module unavailable (Expo Go or web); notifications disabled.
+}
 
 export type PushRegistration = { token: string; platform: DevicePlatform };
 
