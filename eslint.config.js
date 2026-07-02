@@ -4,6 +4,6 @@ const expoConfig = require("eslint-config-expo/flat");
 module.exports = [
   ...expoConfig,
   {
-    ignores: ["dist/*", ".expo/*", "node_modules/*", "babel.config.js"],
+    ignores: ["dist/*", ".expo/*", "node_modules/*", "babel.config.js", "boh-admin/*"],
   },
 ];
