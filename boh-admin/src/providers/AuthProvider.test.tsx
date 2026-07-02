@@ -77,8 +77,9 @@ test("not-staff survives the sign-out null-session event", async () => {
   expect(await screen.findByText("not-staff:none")).toBeInTheDocument();
 
   const callback = mocks.onAuthStateChange.mock.calls[0][0];
-  act(() => {
+  await act(async () => {
     callback("SIGNED_OUT", null);
+    await new Promise((resolve) => setTimeout(resolve, 0));
   });
-  expect(await screen.findByText("not-staff:none")).toBeInTheDocument();
+  expect(screen.getByText("not-staff:none")).toBeInTheDocument();
 });
