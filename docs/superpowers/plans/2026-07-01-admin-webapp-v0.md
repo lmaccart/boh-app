@@ -246,7 +246,7 @@ git commit -m "feat(admin): scaffold boh-admin Vite + React + Vitest project"
 - [ ] `App.tsx` renders copy from `text.ts`, no hardcoded strings
 - [ ] `npm run test` and `npm run build` pass
 
-**Verify:** `cd boh-admin && npm run test && npm run build && grep -il "fbf7f2" dist/assets/*.css` → test passes, grep prints a CSS file.
+**Verify:** `cd boh-admin && npm run test && npm run build && grep -l "251 247 242" dist/assets/*.css` → test passes, grep prints a CSS file. (Tailwind v3 compiles hex palette values to `rgb(...)` space notation, so the check greps the compiled rgb form of `#FBF7F2`.)
 
 **Steps:**
 
@@ -373,7 +373,7 @@ test("renders the app name", () => {
 
 - [ ] **Step 8: Verify**
 
-Run: `npm run test && npm run build && grep -il "fbf7f2" dist/assets/*.css`
+Run: `npm run test && npm run build && grep -l "251 247 242" dist/assets/*.css`
 Expected: test passes; grep prints one CSS filename (palette compiled in).
 
 - [ ] **Step 9: Commit**
