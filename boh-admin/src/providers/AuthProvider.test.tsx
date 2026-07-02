@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 
 import { AuthProvider, useAuth } from "./AuthProvider";
 
@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => {
   return {
     single,
     getSession: vi.fn(),
-    onAuthStateChange: vi.fn(() => ({
+    onAuthStateChange: vi.fn((_callback: (event: string, session: unknown) => void) => ({
       data: { subscription: { unsubscribe: vi.fn() } },
     })),
     signOut: vi.fn().mockResolvedValue({ error: null }),
@@ -68,4 +68,17 @@ test("non-staff session is signed out with not-staff status", async () => {
   renderProbe();
   expect(await screen.findByText("not-staff:none")).toBeInTheDocument();
   expect(mocks.signOut).toHaveBeenCalled();
+});
+
+test("not-staff survives the sign-out null-session event", async () => {
+  mocks.getSession.mockResolvedValue({ data: { session } });
+  mocks.single.mockResolvedValue({ data: { role: "user" }, error: null });
+  renderProbe();
+  expect(await screen.findByText("not-staff:none")).toBeInTheDocument();
+
+  const callback = mocks.onAuthStateChange.mock.calls[0][0];
+  act(() => {
+    callback("SIGNED_OUT", null);
+  });
+  expect(await screen.findByText("not-staff:none")).toBeInTheDocument();
 });

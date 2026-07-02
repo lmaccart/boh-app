@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 import type { Session } from "@supabase/supabase-js";
@@ -24,8 +24,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let cancelled = false;
+    // Monotonic counter so a slow role query cannot clobber the state set by
+    // a newer resolveSession call (e.g. getSession and INITIAL_SESSION both
+    // firing on mount, or a sign-out racing an in-flight role lookup).
+    let generation = 0;
 
     async function resolveSession(next: Session | null) {
+      const gen = ++generation;
+
       if (!next) {
         if (cancelled) return;
         setSession(null);
@@ -41,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .select("role")
         .eq("id", next.user.id)
         .single();
-      if (cancelled) return;
+      if (cancelled || gen !== generation) return;
 
       if (error || !data || (data.role !== "admin" && data.role !== "tarryn")) {
         // Set status before signOut so the resulting null-session event sees
@@ -72,14 +78,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const value: AuthContextValue = {
-    status,
-    session,
-    role,
-    signOut: async () => {
-      await supabase.auth.signOut();
-    },
-  };
+  const signOut = useCallback(async () => {
+    await supabase.auth.signOut();
+  }, []);
+
+  const value = useMemo<AuthContextValue>(
+    () => ({ status, session, role, signOut }),
+    [status, session, role, signOut],
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
