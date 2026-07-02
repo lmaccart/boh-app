@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Design tokens — hex values kept here so tooling can grep the source palette.
+     These CSS custom properties mirror src/theme/palette.json at the repo root. */
+  :root {
+    --color-background: #FBF7F2;
+    --color-foreground: #2D2A26;
+    --color-card: #FFFFFF;
+    --color-card-foreground: #2D2A26;
+    --color-muted: #F0E9E0;
+    --color-muted-foreground: #7A7268;
+    --color-primary: #C26B4A;
+    --color-primary-foreground: #FFFFFF;
+    --color-secondary: #5B7B6F;
+    --color-secondary-foreground: #FFFFFF;
+    --color-accent: #E8B04B;
+    --color-accent-foreground: #2D2A26;
+    --color-destructive: #C0452F;
+    --color-destructive-foreground: #FFFFFF;
+    --color-border: #E5DBCF;
+    --color-input: #E5DBCF;
+    --color-ring: #C26B4A;
+  }
+}
