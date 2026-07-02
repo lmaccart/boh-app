@@ -44,12 +44,12 @@
     {
       "id": 5,
       "subject": "Task 6: Navigation shell, router, and final verification",
-      "status": "pending",
+      "status": "completed",
       "blockedBy": [
         4
       ],
       "description": "Full details in docs/superpowers/plans/2026-07-01-admin-webapp-v0.md (Task 6) - complete component and test code is there.\n\n**Goal:** Sidebar layout with the five placeholder sections wired through react-router behind the guard; spec updated for approved deviations; everything green.\n\n**Files:**\n- Create: `boh-admin/src/components/AdminLayout.tsx`, `boh-admin/src/components/PlaceholderPage.tsx`\n- Modify: `boh-admin/src/App.tsx` (QueryClientProvider + AuthProvider + BrowserRouter + routes), `boh-admin/src/App.test.tsx`\n- Modify: `docs/superpowers/specs/2026-07-01-admin-webapp-versioning-design.md` (Jest -> Vitest; course-content bucket wording -> public read via unguessable UUID paths)\n\n**Acceptance Criteria:**\n- [ ] `/` redirects staff to /inbox; five sections reachable via sidebar NavLinks (/inbox /content /whitelist /announcements /moderation)\n- [ ] Sign-out button calls signOut from auth context\n- [ ] Full suite passes: lint, typecheck, test, build; root repo unaffected\n- [ ] Spec matches what was built\n\n**Verify:** `cd boh-admin && npm run lint && npm run typecheck && npm run test && npm run build` -> all pass\n\n**Steps:** create PlaceholderPage + AdminLayout; TDD the shell - replace App.test.tsx (mock AuthProvider module: passthrough AuthProvider + useAuth mock; staff -> findByText comingSoon + 5 nav links; signed-out -> sign-in button), verify fail, replace App.tsx with real router, verify pass; sync spec; full verification incl. manual smoke (dev server, staff + non-staff Google sign-in); commit. Exact code in plan doc.\n\n```json:metadata\n{\"files\": [\"boh-admin/src/components/AdminLayout.tsx\", \"boh-admin/src/components/PlaceholderPage.tsx\", \"boh-admin/src/App.tsx\", \"boh-admin/src/App.test.tsx\", \"docs/superpowers/specs/2026-07-01-admin-webapp-versioning-design.md\"], \"verifyCommand\": \"cd boh-admin && npm run lint && npm run typecheck && npm run test && npm run build\", \"acceptanceCriteria\": [\"/ redirects to /inbox with 5 nav links\", \"sign-out wired to auth context\", \"lint/typecheck/test/build pass\", \"spec synced\"], \"modelTier\": \"standard\"}\n```"
     }
   ],
-  "lastUpdated": "2026-07-02T18:07:15.959948+00:00"
+  "lastUpdated": "2026-07-02T18:16:13.675146+00:00"
 }
