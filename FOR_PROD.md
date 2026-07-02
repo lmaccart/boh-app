@@ -1,0 +1,2 @@
+- Change `RESEND_FROM` env var to use a verified Resend domain
+  - Update the emails in supabase/functions/reach-out-email/index.ts to send to both of tarryn's emails

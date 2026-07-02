@@ -2,8 +2,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_URL = "https://api.resend.com/emails";
 const TO_ADDRESSES = [
-  "tarryn@drtarrynmaccarthy.com",
-  "hereforyou@drtarrynmaccarthy.com",
+  // "tarryn@drtarrynmaccarthy.com",
+  // "hereforyou@drtarrynmaccarthy.com",
+  "leif@lmgroup.dev",
 ];
 
 interface WebhookPayload {
@@ -31,6 +32,7 @@ Deno.serve(async (req: Request) => {
       .single();
 
     if (recipientErr || !recipient) {
+      if (recipientErr) console.error("recipient lookup error:", JSON.stringify(recipientErr));
       return new Response("ok", { status: 200 });
     }
     if (!["admin", "tarryn"].includes(recipient.role)) {
