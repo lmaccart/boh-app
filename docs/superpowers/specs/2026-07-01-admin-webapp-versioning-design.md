@@ -50,7 +50,7 @@ The mobile app's v1 is complete: the full schema is migrated, the `notify` and `
   - insert/update/delete on `courses`, `course_sections`, `lessons`, `lesson_resources`, `course_whitelist`, `announcements`
   - delete on `community_posts` and `post_replies`
   - select on all `direct_messages` addressed to admin/tarryn recipients
-- **Storage:** new `course-content` bucket for lesson videos, audio, and PDFs, with admin-only write policies and authenticated read
+- **Storage:** new `course-content` bucket for lesson videos, audio, and PDFs, with admin-only write policies; public read via unguessable UUID paths, matching the existing community-media pattern
 
 ### Navigation Shell
 - Sidebar layout with empty placeholder pages: Inbox, Content, Whitelist, Announcements, Moderation
@@ -91,7 +91,7 @@ The mobile app's v1 is complete: the full schema is migrated, the `notify` and `
 
 ### Error Handling & Testing
 - Every mutation surfaces Supabase errors as toasts; destructive actions (deletes, whitelist removal) require confirmation dialogs
-- Jest + React Testing Library covering the auth/role gate, form validation, and the whitelist and inbox flows, matching the mobile app's test setup
+- Vitest + React Testing Library covering the auth/role gate, form validation, and the whitelist and inbox flows, mirroring the mobile app's test style (Vitest is the Vite-native runner; user-approved deviation from Jest)
 
 ---
 
