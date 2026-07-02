@@ -1,2 +1,5 @@
 - Change `RESEND_FROM` env var to use a verified Resend domain
   - Update the emails in supabase/functions/reach-out-email/index.ts to send to both of tarryn's emails
+- Add the admin portal URLs to Supabase Auth -> URL Configuration -> Redirect URLs:
+  - `http://localhost:5173` (dev)
+  - the deployed boh-admin domain (prod)

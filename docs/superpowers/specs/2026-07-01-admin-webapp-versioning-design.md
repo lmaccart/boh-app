@@ -36,7 +36,7 @@ The mobile app's v1 is complete: the full schema is migrated, the `notify` and `
 ### Project Setup
 - Scaffold Vite + React + TypeScript project in `boh-admin/`
 - Tailwind config with the color palette tokens from the mobile app's NativeWind config
-- ESLint, Prettier, path aliases matching the mobile app's conventions
+- Linting (oxlint, the Vite 8 template's ESLint-compatible default), Prettier, path aliases matching the mobile app's conventions
 - Central `src/constants/text.ts` for all user-facing copy
 - Supabase client + environment config (`.env`) pointing at the existing project
 
