@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import type { ReactNode } from "react";
 
 import { text } from "@/constants/text";
@@ -29,6 +30,17 @@ test("staff lands on the inbox with full navigation", async () => {
   for (const label of labels) {
     expect(screen.getByRole("link", { name: label })).toBeInTheDocument();
   }
+});
+
+test("sign-out button calls signOut from the auth context", async () => {
+  const signOut = vi.fn();
+  mocks.useAuth.mockReturnValue({ status: "staff", signOut });
+  window.history.pushState({}, "", "/");
+  render(<App />);
+
+  await screen.findByText(text.placeholder.comingSoon);
+  await userEvent.click(screen.getByRole("button", { name: text.nav.signOut }));
+  expect(signOut).toHaveBeenCalled();
 });
 
 test("signed-out users land on the sign-in page", async () => {
