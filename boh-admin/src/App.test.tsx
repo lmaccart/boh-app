@@ -8,6 +8,14 @@ import App from "./App";
 
 const mocks = vi.hoisted(() => ({ useAuth: vi.fn() }));
 
+vi.mock("@/pages/AnnouncementsPage", () => ({
+  AnnouncementsPage: () => <div>Announcements page</div>,
+}));
+vi.mock("@/pages/ContentPage", () => ({ ContentPage: () => <div>Content page</div> }));
+vi.mock("@/pages/InboxPage", () => ({ InboxPage: () => <div>Inbox page</div> }));
+vi.mock("@/pages/ModerationPage", () => ({ ModerationPage: () => <div>Moderation page</div> }));
+vi.mock("@/pages/WhitelistPage", () => ({ WhitelistPage: () => <div>Whitelist page</div> }));
+
 vi.mock("@/providers/AuthProvider", () => ({
   AuthProvider: ({ children }: { children: ReactNode }) => children,
   useAuth: mocks.useAuth,
@@ -18,7 +26,7 @@ test("staff lands on the inbox with full navigation", async () => {
   window.history.pushState({}, "", "/");
   render(<App />);
 
-  expect(await screen.findByText(text.placeholder.comingSoon)).toBeInTheDocument();
+  expect(await screen.findByText("Inbox page")).toBeInTheDocument();
 
   const labels = [
     text.nav.inbox,
@@ -38,7 +46,7 @@ test("sign-out button calls signOut from the auth context", async () => {
   window.history.pushState({}, "", "/");
   render(<App />);
 
-  await screen.findByText(text.placeholder.comingSoon);
+  await screen.findByText("Inbox page");
   await userEvent.click(screen.getByRole("button", { name: text.nav.signOut }));
   expect(signOut).toHaveBeenCalled();
 });

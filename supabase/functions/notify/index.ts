@@ -23,6 +23,8 @@ Deno.serve(async (req: Request) => {
       await handleCommunityPost(supabase, payload.record);
     } else if (payload.table === "direct_messages") {
       await handleDirectMessage(supabase, payload.record);
+    } else if (payload.table === "announcements") {
+      await handleAnnouncement(supabase, payload.record);
     }
   } catch (err) {
     console.error("notify error:", err);
@@ -30,6 +32,35 @@ Deno.serve(async (req: Request) => {
 
   return new Response("ok", { status: 200 });
 });
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function handleAnnouncement(supabase: any, record: Record<string, unknown>) {
+  let audienceIds: string[];
+
+  if (record["course_id"]) {
+    const { data: rows } = await supabase
+      .from("course_whitelist")
+      .select("user_id")
+      .eq("course_id", record["course_id"]);
+    audienceIds = (rows ?? []).map((r: { user_id: string }) => r.user_id);
+  } else {
+    const { data: rows } = await supabase.from("users").select("id");
+    audienceIds = (rows ?? []).map((r: { id: string }) => r.id);
+  }
+
+  if (!audienceIds.length) return;
+
+  const { data: tokenRows } = await supabase
+    .from("push_tokens")
+    .select("token")
+    .in("user_id", audienceIds);
+
+  const tokens: string[] = (tokenRows ?? []).map((r: { token: string }) => r.token);
+  if (!tokens.length) return;
+
+  const body = String(record["body"] ?? "").slice(0, 100);
+  await sendPushBatch(tokens, "Business of Happiness", body);
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleCommunityPost(supabase: any, record: Record<string, unknown>) {
