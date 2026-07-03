@@ -63,7 +63,6 @@ export const text = {
     existingTitle: "Existing announcements",
     loading: "Loading announcements",
     empty: "No announcements have been published yet.",
-    delete: "Delete",
     deleting: "Deleting",
     confirmDelete: "Delete this announcement? This cannot be undone.",
     loadError: "Could not load announcements. Please try again.",

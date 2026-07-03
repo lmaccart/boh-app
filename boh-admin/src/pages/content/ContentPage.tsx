@@ -30,7 +30,6 @@ import {
   type SectionType,
 } from "./contentData";
 
-
 const sectionTypes: SectionType[] = ["welcome", "nsr", "meditation", "module", "live"];
 const resourceTypes: ResourceType[] = ["pdf", "audio"];
 const emptyCourses: Course[] = [];

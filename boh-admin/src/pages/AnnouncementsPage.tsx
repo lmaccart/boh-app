@@ -236,7 +236,7 @@ export function AnnouncementsPage() {
                       disabled={deletingId === announcement.id}
                       onClick={() => void handleDelete(announcement)}
                     >
-                      {deletingId === announcement.id ? text.announcements.deleting : text.announcements.delete}
+                      {deletingId === announcement.id ? text.announcements.deleting : text.common.delete}
                     </button>
                   </li>
                 );
