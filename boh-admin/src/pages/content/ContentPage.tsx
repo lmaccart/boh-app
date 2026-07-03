@@ -811,7 +811,7 @@ function LessonEditor(
       <div className="flex items-start justify-between gap-4">
         <div>
           <h5 className="font-medium text-foreground">{props.lesson.title}</h5>
-          <p className="mt-1 text-xs text-muted-foreground">Order {props.lesson.order}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{text.content.fieldOrder} {props.lesson.order}</p>
         </div>
         <div className="flex gap-2">
           <Button
