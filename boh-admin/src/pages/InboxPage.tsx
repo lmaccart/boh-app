@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 import { ConversationView, type InboxUser } from "@/components/ConversationView";
+import { text } from "@/constants/text";
 import { cn } from "@/lib/cn";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
@@ -17,19 +18,6 @@ type Conversation = {
   hasUnreadIndicator: boolean;
 };
 
-const copy = {
-  title: "Tarryn Inbox",
-  subtitle: "Read and reply to Reach Out Here direct messages.",
-  loading: "Loading inbox",
-  loadError: "Inbox could not be loaded",
-  emptyTitle: "No conversations yet",
-  emptyBody: "Messages sent to Tarryn by app users will appear here.",
-  unknownUser: "Unknown user",
-  unread: "Unread",
-  latestInbound: "Latest message from user",
-  latestOutbound: "Latest reply from staff",
-} as const;
-
 const inboxQueryKey = ["inbox"] as const;
 
 function formatPreviewTime(value: string) {
@@ -42,7 +30,7 @@ function formatPreviewTime(value: string) {
 }
 
 function userLabel(user: InboxUser) {
-  return user.name || user.email || copy.unknownUser;
+  return user.name || user.email || text.common.unknownUser;
 }
 
 function errorMessage(error: unknown) {
@@ -170,7 +158,7 @@ export function InboxPage() {
   const sendReply = useMutation({
     mutationFn: async ({ recipientId, body }: { recipientId: string; body: string }) => {
       const senderId = session?.user.id;
-      if (!senderId) throw new Error("You must be signed in to reply.");
+      if (!senderId) throw new Error(text.inbox.sessionRequired);
 
       const { data, error } = await supabase
         .from("direct_messages")
@@ -192,22 +180,22 @@ export function InboxPage() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-foreground">{copy.title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{copy.subtitle}</p>
+        <h1 className="text-2xl font-semibold text-foreground">{text.inbox.title}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{text.inbox.subtitle}</p>
       </header>
 
       {loadError ? (
         <div className="mb-4 rounded-card border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {copy.loadError}: {loadError}
+          {text.inbox.loadError}: {loadError}
         </div>
       ) : null}
 
-      {isLoading ? <p className="text-sm text-muted-foreground">{copy.loading}</p> : null}
+      {isLoading ? <p className="text-sm text-muted-foreground">{text.inbox.loading}</p> : null}
 
       {!isLoading && conversations.length === 0 ? (
         <section className="rounded-card border border-border bg-card p-8">
-          <h2 className="text-lg font-semibold text-foreground">{copy.emptyTitle}</h2>
-          <p className="mt-2 text-sm text-muted-foreground">{copy.emptyBody}</p>
+          <h2 className="text-lg font-semibold text-foreground">{text.inbox.emptyTitle}</h2>
+          <p className="mt-2 text-sm text-muted-foreground">{text.inbox.emptyBody}</p>
         </section>
       ) : null}
 
@@ -236,7 +224,7 @@ export function InboxPage() {
                     </div>
                     {conversation.hasUnreadIndicator ? (
                       <span className="rounded-full bg-primary px-2 py-1 text-xs font-medium text-primary-foreground">
-                        {copy.unread}
+                        {text.inbox.unread}
                       </span>
                     ) : null}
                   </div>
@@ -245,7 +233,7 @@ export function InboxPage() {
                   </p>
                   <div className="mt-3 flex items-center justify-between gap-3 text-xs text-muted-foreground">
                     <span>
-                      {conversation.hasUnreadIndicator ? copy.latestInbound : copy.latestOutbound}
+                      {conversation.hasUnreadIndicator ? text.inbox.latestInbound : text.inbox.latestOutbound}
                     </span>
                     <time dateTime={conversation.latestMessage.created_at}>
                       {formatPreviewTime(conversation.latestMessage.created_at)}

@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { text } from "@/constants/text";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database.types";
 
@@ -13,38 +14,15 @@ type Profile = Tables<"profiles">;
 type PendingDelete =
   { type: "post"; post: CommunityPost; replies: PostReply[] } | { type: "reply"; reply: PostReply };
 
-const copy = {
-  title: "Moderation",
-  description: "Browse community posts and replies across the global feed and course feeds.",
-  feedLabel: "Feed",
-  globalFeed: "Business of Happiness global feed",
-  loading: "Loading community feed...",
-  empty: "No posts in this feed yet.",
-  unknownAuthor: "Unknown member",
-  noBody: "No text content",
-  media: "Media",
-  replies: "Replies",
-  noReplies: "No replies yet.",
-  deletePost: "Delete post",
-  deleteReply: "Delete reply",
-  confirmTitle: "Confirm deletion",
-  confirmPost: "Delete this post and all of its replies? This cannot be undone.",
-  confirmReply: "Delete this reply? This cannot be undone.",
-  cancel: "Cancel",
-  confirm: "Confirm delete",
-  loadError: "Unable to load moderation content.",
-  deleteError: "Unable to delete content.",
-};
-
 function errorMessage(error: unknown): string {
   if (error instanceof Error) return error.message;
   if (typeof error === "string") return error;
-  return "Something went wrong.";
+  return text.common.somethingWentWrong;
 }
 
 function authorName(profiles: Map<string, Profile>, userId: string): string {
   const profile = profiles.get(userId);
-  return profile?.name ?? copy.unknownAuthor;
+  return profile?.name ?? text.moderation.unknownAuthor;
 }
 
 function formatDate(value: string): string {
@@ -198,20 +176,20 @@ export function ModerationPage() {
   const loadError = courses.error ?? profiles.error ?? feed.error;
   const selectedFeedName =
     selectedCourseId === null
-      ? copy.globalFeed
+      ? text.moderation.globalFeed
       : (courses.data?.find((course) => course.id === selectedCourseId)?.title ??
-        "Selected course");
+        text.moderation.selectedCourse);
 
   return (
     <div className="max-w-5xl">
       <header>
-        <h1 className="text-2xl font-semibold text-foreground">{copy.title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{copy.description}</p>
+        <h1 className="text-2xl font-semibold text-foreground">{text.moderation.title}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{text.moderation.description}</p>
       </header>
 
       <div className="mt-6 max-w-sm">
         <label className="block text-sm font-medium text-foreground" htmlFor="moderation-feed">
-          {copy.feedLabel}
+          {text.moderation.feedLabel}
         </label>
         <select
           id="moderation-feed"
@@ -221,7 +199,7 @@ export function ModerationPage() {
             setSelectedCourseId(event.target.value === "global" ? null : event.target.value)
           }
         >
-          <option value="global">{copy.globalFeed}</option>
+          <option value="global">{text.moderation.globalFeed}</option>
           {(courses.data ?? []).map((course) => (
             <option key={course.id} value={course.id}>
               {course.title}
@@ -235,7 +213,7 @@ export function ModerationPage() {
           className="mt-4 rounded-card border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
           role="alert"
         >
-          <p className="font-medium">{copy.loadError}</p>
+          <p className="font-medium">{text.moderation.loadError}</p>
           <p className="mt-1">{errorMessage(loadError)}</p>
         </div>
       ) : null}
@@ -245,7 +223,7 @@ export function ModerationPage() {
           className="mt-4 rounded-card border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive"
           role="alert"
         >
-          <p className="font-medium">{copy.deleteError}</p>
+          <p className="font-medium">{text.moderation.deleteError}</p>
           <p className="mt-1">{errorMessage(deleteMutation.error)}</p>
         </div>
       ) : null}
@@ -257,10 +235,10 @@ export function ModerationPage() {
           aria-labelledby="confirm-delete-title"
         >
           <h2 className="text-base font-semibold text-foreground" id="confirm-delete-title">
-            {copy.confirmTitle}
+            {text.moderation.confirmTitle}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            {pendingDelete.type === "post" ? copy.confirmPost : copy.confirmReply}
+            {pendingDelete.type === "post" ? text.moderation.confirmPost : text.moderation.confirmReply}
           </p>
           <div className="mt-4 flex gap-3">
             <button
@@ -269,7 +247,7 @@ export function ModerationPage() {
               onClick={() => setPendingDelete(null)}
               disabled={deleteMutation.isPending}
             >
-              {copy.cancel}
+              {text.moderation.cancel}
             </button>
             <button
               type="button"
@@ -277,17 +255,17 @@ export function ModerationPage() {
               onClick={() => deleteMutation.mutate(pendingDelete)}
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending ? "Deleting..." : copy.confirm}
+              {deleteMutation.isPending ? text.moderation.deleting : text.moderation.confirm}
             </button>
           </div>
         </div>
       ) : null}
 
       <section className="mt-8" aria-label={selectedFeedName}>
-        {isLoading ? <p className="text-sm text-muted-foreground">{copy.loading}</p> : null}
+        {isLoading ? <p className="text-sm text-muted-foreground">{text.moderation.loading}</p> : null}
         {!isLoading && !loadError && (feed.data?.posts.length ?? 0) === 0 ? (
           <p className="rounded-card border border-border bg-card p-4 text-sm text-muted-foreground">
-            {copy.empty}
+            {text.moderation.empty}
           </p>
         ) : null}
 
@@ -311,11 +289,11 @@ export function ModerationPage() {
                     className="rounded-card border border-destructive/40 px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
                     onClick={() => setPendingDelete({ type: "post", post, replies })}
                   >
-                    {copy.deletePost}
+                    {text.moderation.deletePost}
                   </button>
                 </div>
                 <p className="mt-4 whitespace-pre-wrap text-sm text-foreground">
-                  {post.body || copy.noBody}
+                  {post.body || text.moderation.noBody}
                 </p>
                 {post.media_url ? (
                   <a
@@ -324,16 +302,16 @@ export function ModerationPage() {
                     rel="noreferrer"
                     target="_blank"
                   >
-                    {copy.media}
+                    {text.moderation.media}
                   </a>
                 ) : null}
 
                 <div className="mt-5 border-t border-border pt-4">
                   <h3 className="text-sm font-semibold text-foreground">
-                    {copy.replies} ({replies.length})
+                    {text.moderation.replies} ({replies.length})
                   </h3>
                   {replies.length === 0 ? (
-                    <p className="mt-2 text-sm text-muted-foreground">{copy.noReplies}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">{text.moderation.noReplies}</p>
                   ) : null}
                   <div className="mt-3 space-y-3">
                     {replies.map((reply) => (
@@ -352,11 +330,11 @@ export function ModerationPage() {
                             className="rounded-card border border-destructive/40 px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
                             onClick={() => setPendingDelete({ type: "reply", reply })}
                           >
-                            {copy.deleteReply}
+                            {text.moderation.deleteReply}
                           </button>
                         </div>
                         <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">
-                          {reply.body || copy.noBody}
+                          {reply.body || text.moderation.noBody}
                         </p>
                         {reply.media_url ? (
                           <a
@@ -365,7 +343,7 @@ export function ModerationPage() {
                             rel="noreferrer"
                             target="_blank"
                           >
-                            {copy.media}
+                            {text.moderation.media}
                           </a>
                         ) : null}
                       </div>

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { text } from "@/constants/text";
 import {
   createCourse,
   createLesson,
@@ -29,13 +30,6 @@ import {
   type SectionType,
 } from "./contentData";
 
-const copy = {
-  title: "Content Management",
-  subtitle: "Manage courses, sections, lessons, videos, PDFs, and audio resources.",
-  errorsTitle: "Something went wrong",
-  loading: "Loading content...",
-  emptyCourses: "Create a course to start adding sections and lessons.",
-};
 
 const sectionTypes: SectionType[] = ["welcome", "nsr", "meditation", "module", "live"];
 const resourceTypes: ResourceType[] = ["pdf", "audio"];
@@ -60,7 +54,7 @@ const emptyLessonForm: LessonForm = { title: "", order: "0", videoUrl: "", video
 const emptyResourceForm: ResourceForm = { title: "", type: "pdf", url: "", file: null };
 
 function mutationMessage(error: unknown) {
-  return error instanceof Error ? error.message : "The content update could not be saved.";
+  return error instanceof Error ? error.message : text.content.saveError;
 }
 
 function dateInputValue(value: string | null) {
@@ -340,24 +334,24 @@ export function ContentPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-foreground">{copy.title}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{copy.subtitle}</p>
+        <h1 className="text-2xl font-semibold text-foreground">{text.content.title}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{text.content.subtitle}</p>
       </header>
 
       {pageError ? (
         <div role="alert" className="rounded-card border border-destructive p-4 text-sm text-destructive">
-          <p className="font-semibold">{copy.errorsTitle}</p>
+          <p className="font-semibold">{text.common.somethingWentWrong}</p>
           <p className="mt-1">{pageError}</p>
         </div>
       ) : null}
 
-      {isLoading ? <p className="text-sm text-muted-foreground">{copy.loading}</p> : null}
+      {isLoading ? <p className="text-sm text-muted-foreground">{text.content.loading}</p> : null}
 
       <div className="grid gap-6 xl:grid-cols-[280px_minmax(0,1fr)]">
         <aside className="space-y-4 rounded-card border border-border bg-card p-4">
-          <h2 className="font-semibold text-foreground">Courses</h2>
+          <h2 className="font-semibold text-foreground">{text.content.coursesHeading}</h2>
           <form className="space-y-3" onSubmit={(event) => void submitCourse(event)}>
-            <Field label="Course title">
+            <Field label={text.content.courseTitle}>
               <input
                 className={inputClass}
                 required
@@ -365,7 +359,7 @@ export function ContentPage() {
                 onChange={(event) => setCourseForm({ ...courseForm, title: event.target.value })}
               />
             </Field>
-            <Field label="Start date">
+            <Field label={text.content.startDate}>
               <input
                 className={inputClass}
                 type="date"
@@ -374,12 +368,12 @@ export function ContentPage() {
               />
             </Field>
             <Button type="submit" variant="primary" disabled={!courseForm.title.trim()}>
-              Add course
+              {text.content.addCourse}
             </Button>
           </form>
 
           <div className="space-y-2 border-t border-border pt-4">
-            {courses.length === 0 ? <p className="text-sm text-muted-foreground">{copy.emptyCourses}</p> : null}
+            {courses.length === 0 ? <p className="text-sm text-muted-foreground">{text.content.emptyCourses}</p> : null}
             {courses.map((course) => (
               <button
                 key={course.id}
@@ -388,7 +382,7 @@ export function ContentPage() {
                 onClick={() => setSelectedCourseId(course.id)}
               >
                 <span className="block font-medium">{course.title}</span>
-                <span className="block text-xs opacity-80">{course.start_date ?? "No start date"}</span>
+                <span className="block text-xs opacity-80">{course.start_date ?? text.content.noStartDate}</span>
               </button>
             ))}
           </div>
@@ -403,7 +397,7 @@ export function ContentPage() {
               onSubmit={submitCourseEdit}
               onDelete={() =>
                 void runMutation(async () => {
-                  if (!window.confirm(`Delete ${selectedCourse.title}? This also deletes its sections and lessons.`)) {
+                  if (!window.confirm(text.content.confirmDeleteCourse(selectedCourse.title))) {
                     return;
                   }
                   await deleteCourse(selectedCourse.id);
@@ -418,15 +412,12 @@ export function ContentPage() {
             <section className="space-y-4 rounded-card border border-border bg-card p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h2 className="font-semibold text-foreground">Sections</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    Use order controls for now; drag-to-reorder can replace these later.
-                  </p>
+                  <h2 className="font-semibold text-foreground">{text.content.sectionsHeading}</h2>
                 </div>
               </div>
 
               <form className="grid gap-3 lg:grid-cols-[1fr_160px_110px_190px_auto]" onSubmit={submitSection}>
-                <Field label="Title">
+                <Field label={text.content.fieldTitle}>
                   <input
                     className={inputClass}
                     required
@@ -434,7 +425,7 @@ export function ContentPage() {
                     onChange={(event) => setSectionForm({ ...sectionForm, title: event.target.value })}
                   />
                 </Field>
-                <Field label="Type">
+                <Field label={text.content.fieldType}>
                   <select
                     className={inputClass}
                     value={sectionForm.type}
@@ -449,7 +440,7 @@ export function ContentPage() {
                     ))}
                   </select>
                 </Field>
-                <Field label="Order">
+                <Field label={text.content.fieldOrder}>
                   <input
                     className={inputClass}
                     type="number"
@@ -457,7 +448,7 @@ export function ContentPage() {
                     onChange={(event) => setSectionForm({ ...sectionForm, order: event.target.value })}
                   />
                 </Field>
-                <Field label="Module go-live">
+                <Field label={text.content.moduleGoLive}>
                   <input
                     className={inputClass}
                     type="datetime-local"
@@ -470,7 +461,7 @@ export function ContentPage() {
                 </Field>
                 <div className="self-end">
                   <Button type="submit" variant="primary" disabled={!sectionForm.title.trim()}>
-                    Add section
+                    {text.content.addSection}
                   </Button>
                 </div>
               </form>
@@ -520,7 +511,7 @@ export function ContentPage() {
                     }
                     onDelete={() =>
                       void runMutation(async () => {
-                        if (!window.confirm(`Delete section ${section.title}? Its lessons will also be deleted.`)) {
+                        if (!window.confirm(text.content.confirmDeleteSection(section.title))) {
                           return;
                         }
                         await deleteSection(section.id);
@@ -553,7 +544,7 @@ export function ContentPage() {
                     }
                     onLessonDelete={(lesson) =>
                       void runMutation(async () => {
-                        if (!window.confirm(`Delete lesson ${lesson.title}? Its resources will also be deleted.`)) {
+                        if (!window.confirm(text.content.confirmDeleteLesson(lesson.title))) {
                           return;
                         }
                         await deleteLesson(lesson.id);
@@ -588,7 +579,7 @@ export function ContentPage() {
                     }
                     onResourceDelete={(resource) =>
                       void runMutation(async () => {
-                        if (!window.confirm(`Delete resource ${resource.title}?`)) return;
+                        if (!window.confirm(text.content.confirmDeleteResource(resource.title))) return;
                         await deleteLessonResource(resource.id);
                         await courseMutation.mutateAsync();
                       })
@@ -621,15 +612,15 @@ function CourseEditor({
     <section className="rounded-card border border-border bg-card p-4">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-semibold text-foreground">Selected course</h2>
+          <h2 className="font-semibold text-foreground">{text.content.selectedCourseHeading}</h2>
           <p className="mt-1 text-sm text-muted-foreground">{course.title}</p>
         </div>
         <Button type="button" variant="danger" onClick={onDelete}>
-          Delete course
+          {text.content.deleteCourse}
         </Button>
       </div>
       <form className="mt-4 grid gap-3 lg:grid-cols-[1fr_180px_auto]" onSubmit={onSubmit}>
-        <Field label="Course title">
+        <Field label={text.content.courseTitle}>
           <input
             className={inputClass}
             required
@@ -637,7 +628,7 @@ function CourseEditor({
             onChange={(event) => onFormChange({ ...form, title: event.target.value })}
           />
         </Field>
-        <Field label="Start date">
+        <Field label={text.content.startDate}>
           <input
             className={inputClass}
             type="date"
@@ -647,7 +638,7 @@ function CourseEditor({
         </Field>
         <div className="self-end">
           <Button type="submit" variant="primary" disabled={!form.title.trim()}>
-            Save course
+            {text.content.saveCourse}
           </Button>
         </div>
       </form>
@@ -691,24 +682,24 @@ function SectionEditor(props: {
         <div>
           <h3 className="font-semibold text-foreground">{props.section.title}</h3>
           <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
-            {props.section.type} section, order {props.section.order}
+            {text.content.sectionCaption(props.section.type, props.section.order)}
           </p>
         </div>
         <div className="flex gap-2">
           <Button type="button" onClick={() => props.onMove("up")} disabled={!props.canMoveUp}>
-            Move up
+            {text.content.moveUp}
           </Button>
           <Button type="button" onClick={() => props.onMove("down")} disabled={!props.canMoveDown}>
-            Move down
+            {text.content.moveDown}
           </Button>
           <Button type="button" variant="danger" onClick={props.onDelete}>
-            Delete
+            {text.common.delete}
           </Button>
         </div>
       </div>
 
       <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_150px_100px_190px_auto]">
-        <Field label="Title">
+        <Field label={text.content.fieldTitle}>
           <input
             className={inputClass}
             required
@@ -716,7 +707,7 @@ function SectionEditor(props: {
             onChange={(event) => props.onFormChange({ ...props.form, title: event.target.value })}
           />
         </Field>
-        <Field label="Type">
+        <Field label={text.content.fieldType}>
           <select
             className={inputClass}
             value={props.form.type}
@@ -731,7 +722,7 @@ function SectionEditor(props: {
             ))}
           </select>
         </Field>
-        <Field label="Order">
+        <Field label={text.content.fieldOrder}>
           <input
             className={inputClass}
             type="number"
@@ -739,7 +730,7 @@ function SectionEditor(props: {
             onChange={(event) => props.onFormChange({ ...props.form, order: event.target.value })}
           />
         </Field>
-        <Field label="Module go-live">
+        <Field label={text.content.moduleGoLive}>
           <input
             className={inputClass}
             type="datetime-local"
@@ -750,15 +741,15 @@ function SectionEditor(props: {
         </Field>
         <div className="self-end">
           <Button type="button" variant="primary" onClick={props.onSubmit} disabled={!props.form.title.trim()}>
-            Save section
+            {text.content.saveSection}
           </Button>
         </div>
       </div>
 
       <div className="mt-6 space-y-4 border-t border-border pt-4">
-        <h4 className="font-medium text-foreground">Lessons</h4>
+        <h4 className="font-medium text-foreground">{text.content.lessonsHeading}</h4>
         <form className="grid gap-3 lg:grid-cols-[1fr_90px_1fr_1fr_auto]" onSubmit={props.onLessonSubmit}>
-          <Field label="Title">
+          <Field label={text.content.fieldTitle}>
             <input
               className={inputClass}
               required
@@ -766,7 +757,7 @@ function SectionEditor(props: {
               onChange={(event) => props.onLessonFormChange({ ...lessonForm, title: event.target.value })}
             />
           </Field>
-          <Field label="Order">
+          <Field label={text.content.fieldOrder}>
             <input
               className={inputClass}
               type="number"
@@ -774,7 +765,7 @@ function SectionEditor(props: {
               onChange={(event) => props.onLessonFormChange({ ...lessonForm, order: event.target.value })}
             />
           </Field>
-          <Field label="Video URL">
+          <Field label={text.content.videoUrl}>
             <input
               className={inputClass}
               value={lessonForm.videoUrl}
@@ -783,7 +774,7 @@ function SectionEditor(props: {
               }
             />
           </Field>
-          <Field label="Upload video">
+          <Field label={text.content.uploadVideo}>
             <input
               className={inputClass}
               type="file"
@@ -795,7 +786,7 @@ function SectionEditor(props: {
           </Field>
           <div className="self-end">
             <Button type="submit" variant="primary" disabled={!lessonForm.title.trim()}>
-              {props.uploadingKey === `new-lesson-${props.section.id}` ? "Uploading..." : "Add lesson"}
+              {props.uploadingKey === `new-lesson-${props.section.id}` ? text.common.uploading : text.content.addLesson}
             </Button>
           </div>
         </form>
@@ -828,23 +819,23 @@ function LessonEditor(
             onClick={() => props.onLessonMove(props.lessonIndex, "up")}
             disabled={props.lessonIndex === 0}
           >
-            Move up
+            {text.content.moveUp}
           </Button>
           <Button
             type="button"
             onClick={() => props.onLessonMove(props.lessonIndex, "down")}
             disabled={props.lessonIndex === props.lessons.length - 1}
           >
-            Move down
+            {text.content.moveDown}
           </Button>
           <Button type="button" variant="danger" onClick={() => props.onLessonDelete(props.lesson)}>
-            Delete
+            {text.common.delete}
           </Button>
         </div>
       </div>
 
       <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_90px_1fr_1fr_auto]">
-        <Field label="Title">
+        <Field label={text.content.fieldTitle}>
           <input
             className={inputClass}
             required
@@ -854,7 +845,7 @@ function LessonEditor(
             }
           />
         </Field>
-        <Field label="Order">
+        <Field label={text.content.fieldOrder}>
           <input
             className={inputClass}
             type="number"
@@ -864,7 +855,7 @@ function LessonEditor(
             }
           />
         </Field>
-        <Field label="Video URL">
+        <Field label={text.content.videoUrl}>
           <input
             className={inputClass}
             value={form.videoUrl}
@@ -873,7 +864,7 @@ function LessonEditor(
             }
           />
         </Field>
-        <Field label="Replace video">
+        <Field label={text.content.replaceVideo}>
           <input
             className={inputClass}
             type="file"
@@ -888,18 +879,18 @@ function LessonEditor(
         </Field>
         <div className="self-end">
           <Button type="button" variant="primary" onClick={() => props.onLessonSave(props.lesson)}>
-            {props.uploadingKey === `lesson-${props.lesson.id}` ? "Uploading..." : "Save lesson"}
+            {props.uploadingKey === `lesson-${props.lesson.id}` ? text.common.uploading : text.content.saveLesson}
           </Button>
         </div>
       </div>
 
       <div className="mt-4 space-y-3 border-t border-border pt-4">
-        <h6 className="text-sm font-medium text-foreground">Resources</h6>
+        <h6 className="text-sm font-medium text-foreground">{text.content.resourcesHeading}</h6>
         <form
           className="grid gap-3 lg:grid-cols-[1fr_120px_1fr_1fr_auto]"
           onSubmit={(event) => props.onResourceSubmit(props.lesson.id, event)}
         >
-          <Field label="Title">
+          <Field label={text.content.fieldTitle}>
             <input
               className={inputClass}
               required
@@ -912,7 +903,7 @@ function LessonEditor(
               }
             />
           </Field>
-          <Field label="Type">
+          <Field label={text.content.fieldType}>
             <select
               className={inputClass}
               value={resourceForm.type}
@@ -930,7 +921,7 @@ function LessonEditor(
               ))}
             </select>
           </Field>
-          <Field label="URL">
+          <Field label={text.content.fieldUrl}>
             <input
               className={inputClass}
               value={resourceForm.url}
@@ -939,7 +930,7 @@ function LessonEditor(
               }
             />
           </Field>
-          <Field label="Upload file">
+          <Field label={text.content.uploadFile}>
             <input
               className={inputClass}
               type="file"
@@ -958,7 +949,7 @@ function LessonEditor(
               variant="primary"
               disabled={!resourceForm.title.trim() || (!resourceForm.url.trim() && !resourceForm.file)}
             >
-              {props.uploadingKey === `new-resource-${props.lesson.id}` ? "Uploading..." : "Add resource"}
+              {props.uploadingKey === `new-resource-${props.lesson.id}` ? text.common.uploading : text.content.addResource}
             </Button>
           </div>
         </form>
@@ -967,7 +958,7 @@ function LessonEditor(
           const resourceEdit = props.resourceEdits[resource.id] ?? emptyResourceForm;
           return (
             <div key={resource.id} className="grid gap-3 rounded-card border border-border p-3 lg:grid-cols-[1fr_120px_1fr_1fr_auto_auto]">
-              <Field label="Title">
+              <Field label={text.content.fieldTitle}>
                 <input
                   className={inputClass}
                   value={resourceEdit.title}
@@ -979,7 +970,7 @@ function LessonEditor(
                   }
                 />
               </Field>
-              <Field label="Type">
+              <Field label={text.content.fieldType}>
                 <select
                   className={inputClass}
                   value={resourceEdit.type}
@@ -997,7 +988,7 @@ function LessonEditor(
                   ))}
                 </select>
               </Field>
-              <Field label="URL">
+              <Field label={text.content.fieldUrl}>
                 <input
                   className={inputClass}
                   value={resourceEdit.url}
@@ -1006,7 +997,7 @@ function LessonEditor(
                   }
                 />
               </Field>
-              <Field label="Replace file">
+              <Field label={text.content.replaceFile}>
                 <input
                   className={inputClass}
                   type="file"
@@ -1021,12 +1012,12 @@ function LessonEditor(
               </Field>
               <div className="self-end">
                 <Button type="button" variant="primary" onClick={() => props.onResourceSave(resource)}>
-                  {props.uploadingKey === `resource-${resource.id}` ? "Uploading..." : "Save"}
+                  {props.uploadingKey === `resource-${resource.id}` ? text.common.uploading : text.common.save}
                 </Button>
               </div>
               <div className="self-end">
                 <Button type="button" variant="danger" onClick={() => props.onResourceDelete(resource)}>
-                  Delete
+                  {text.common.delete}
                 </Button>
               </div>
             </div>

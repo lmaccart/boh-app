@@ -1,3 +1,4 @@
+import { text } from "@/constants/text";
 import { supabase } from "@/lib/supabase";
 import type { Enums, Tables, TablesInsert, TablesUpdate } from "@/types/database.types";
 
@@ -26,7 +27,7 @@ type SupabaseResult<T> = { data: T; error: { message: string } | null };
 
 function requireData<T>({ data, error }: SupabaseResult<T>): NonNullable<T> {
   if (error) throw new Error(error.message);
-  if (data === null) throw new Error("Supabase returned no data.");
+  if (data === null) throw new Error(text.common.noData);
   return data as NonNullable<T>;
 }
 

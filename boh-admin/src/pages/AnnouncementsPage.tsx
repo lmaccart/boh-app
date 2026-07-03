@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 
+import { text } from "@/constants/text";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
 import type { Tables } from "@/types/database.types";
@@ -10,30 +11,6 @@ type Announcement = Pick<
   Tables<"announcements">,
   "id" | "body" | "course_id" | "created_at" | "posted_by"
 >;
-
-const copy = {
-  title: "Announcements",
-  subtitle: "Publish app-wide updates or course-specific notices for students.",
-  composeTitle: "Compose announcement",
-  scopeLabel: "Audience",
-  appWideOption: "App-wide",
-  bodyLabel: "Message",
-  bodyPlaceholder: "Write the announcement students should see.",
-  publish: "Publish announcement",
-  publishing: "Publishing",
-  existingTitle: "Existing announcements",
-  loading: "Loading announcements",
-  empty: "No announcements have been published yet.",
-  delete: "Delete",
-  deleting: "Deleting",
-  confirmDelete: "Delete this announcement? This cannot be undone.",
-  loadError: "Could not load announcements. Please try again.",
-  bodyRequired: "Write an announcement before publishing.",
-  sessionRequired: "Your admin session could not be verified. Please sign in again.",
-  unknownCourse: "Unknown course",
-  createdPrefix: "Published",
-  mutationErrorPrefix: "Supabase error:",
-};
 
 export function AnnouncementsPage() {
   const { session } = useAuth();
@@ -80,7 +57,7 @@ export function AnnouncementsPage() {
         await loadData();
       } catch (error) {
         if (cancelled) return;
-        setLoadError(error instanceof Error ? error.message : copy.loadError);
+        setLoadError(error instanceof Error ? error.message : text.announcements.loadError);
         setIsLoading(false);
       }
     }
@@ -98,11 +75,11 @@ export function AnnouncementsPage() {
 
     const trimmedBody = body.trim();
     if (!trimmedBody) {
-      setMutationError(copy.bodyRequired);
+      setMutationError(text.announcements.bodyRequired);
       return;
     }
     if (!session?.user.id) {
-      setMutationError(copy.sessionRequired);
+      setMutationError(text.announcements.sessionRequired);
       return;
     }
 
@@ -124,7 +101,7 @@ export function AnnouncementsPage() {
     try {
       await loadData();
     } catch (error) {
-      setLoadError(error instanceof Error ? error.message : copy.loadError);
+      setLoadError(error instanceof Error ? error.message : text.announcements.loadError);
       setIsLoading(false);
     } finally {
       setIsPublishing(false);
@@ -132,7 +109,7 @@ export function AnnouncementsPage() {
   }
 
   async function handleDelete(announcement: Announcement) {
-    if (!window.confirm(copy.confirmDelete)) return;
+    if (!window.confirm(text.announcements.confirmDelete)) return;
 
     setMutationError(null);
     setDeletingId(announcement.id);
@@ -151,19 +128,19 @@ export function AnnouncementsPage() {
   return (
     <div className="max-w-5xl space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold text-foreground">{copy.title}</h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{copy.subtitle}</p>
+        <h1 className="text-2xl font-semibold text-foreground">{text.announcements.title}</h1>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{text.announcements.subtitle}</p>
       </header>
 
       <section className="rounded-card border border-border bg-card p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-foreground">{copy.composeTitle}</h2>
+        <h2 className="text-lg font-semibold text-foreground">{text.announcements.composeTitle}</h2>
         <form className="mt-5 space-y-5" onSubmit={(event) => void handlePublish(event)}>
           <div>
             <label
               className="block text-sm font-medium text-foreground"
               htmlFor="announcement-scope"
             >
-              {copy.scopeLabel}
+              {text.announcements.scopeLabel}
             </label>
             <select
               id="announcement-scope"
@@ -171,7 +148,7 @@ export function AnnouncementsPage() {
               value={scope}
               onChange={(event) => setScope(event.target.value)}
             >
-              <option value="app-wide">{copy.appWideOption}</option>
+              <option value="app-wide">{text.announcements.appWideOption}</option>
               {courses.map((course) => (
                 <option key={course.id} value={course.id}>
                   {course.title}
@@ -185,12 +162,12 @@ export function AnnouncementsPage() {
               className="block text-sm font-medium text-foreground"
               htmlFor="announcement-body"
             >
-              {copy.bodyLabel}
+              {text.announcements.bodyLabel}
             </label>
             <textarea
               id="announcement-body"
               className="mt-2 min-h-32 w-full rounded-card border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              placeholder={copy.bodyPlaceholder}
+              placeholder={text.announcements.bodyPlaceholder}
               value={body}
               onChange={(event) => setBody(event.target.value)}
             />
@@ -198,7 +175,7 @@ export function AnnouncementsPage() {
 
           {mutationError ? (
             <p className="rounded-card border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-              {copy.mutationErrorPrefix} {mutationError}
+              {text.common.supabaseErrorPrefix} {mutationError}
             </p>
           ) : null}
 
@@ -207,27 +184,27 @@ export function AnnouncementsPage() {
             className="rounded-card bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={isPublishing}
           >
-            {isPublishing ? copy.publishing : copy.publish}
+            {isPublishing ? text.announcements.publishing : text.announcements.publish}
           </button>
         </form>
       </section>
 
       <section>
         <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold text-foreground">{copy.existingTitle}</h2>
+          <h2 className="text-lg font-semibold text-foreground">{text.announcements.existingTitle}</h2>
         </div>
 
         {loadError ? (
           <p className="mt-4 rounded-card border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-            {copy.loadError} {loadError}
+            {text.announcements.loadError} {loadError}
           </p>
         ) : null}
 
-        {isLoading ? <p className="mt-4 text-sm text-muted-foreground">{copy.loading}</p> : null}
+        {isLoading ? <p className="mt-4 text-sm text-muted-foreground">{text.announcements.loading}</p> : null}
 
         {!isLoading && !loadError && announcements.length === 0 ? (
           <p className="mt-4 rounded-card border border-border bg-card px-4 py-6 text-sm text-muted-foreground">
-            {copy.empty}
+            {text.announcements.empty}
           </p>
         ) : null}
 
@@ -236,8 +213,8 @@ export function AnnouncementsPage() {
             <ul className="divide-y divide-border">
               {announcements.map((announcement) => {
                 const audience = announcement.course_id
-                  ? (courseTitles.get(announcement.course_id) ?? copy.unknownCourse)
-                  : copy.appWideOption;
+                  ? (courseTitles.get(announcement.course_id) ?? text.announcements.unknownCourse)
+                  : text.announcements.appWideOption;
                 const createdAt = new Date(announcement.created_at).toLocaleString();
 
                 return (
@@ -246,7 +223,7 @@ export function AnnouncementsPage() {
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                         <span className="font-medium text-foreground">{audience}</span>
                         <span className="text-muted-foreground">
-                          {copy.createdPrefix} {createdAt}
+                          {text.announcements.createdPrefix} {createdAt}
                         </span>
                       </div>
                       <p className="mt-2 whitespace-pre-wrap text-sm leading-6 text-foreground">
@@ -259,7 +236,7 @@ export function AnnouncementsPage() {
                       disabled={deletingId === announcement.id}
                       onClick={() => void handleDelete(announcement)}
                     >
-                      {deletingId === announcement.id ? copy.deleting : copy.delete}
+                      {deletingId === announcement.id ? text.announcements.deleting : text.announcements.delete}
                     </button>
                   </li>
                 );
