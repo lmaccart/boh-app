@@ -15,3 +15,4 @@ if (!supabaseUrl || !supabaseAnonKey) {
 // Web defaults are what we want: localStorage session persistence and
 // detectSessionInUrl for the OAuth redirect back from Google.
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+export { supabaseUrl };

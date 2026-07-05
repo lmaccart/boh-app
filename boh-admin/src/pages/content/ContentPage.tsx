@@ -108,7 +108,7 @@ export function ContentPage() {
   const queryClient = useQueryClient();
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number | undefined>>({});
   const [courseForm, setCourseForm] = useState<CourseForm>(emptyCourseForm);
   const [courseEditForm, setCourseEditForm] = useState<CourseForm>(emptyCourseForm);
   const [sectionForm, setSectionForm] = useState<SectionForm>(emptySectionForm);
@@ -308,11 +308,17 @@ export function ContentPage() {
     folder: "videos" | "resources",
   ) {
     if (!file) return fallbackUrl.trim();
-    setUploadingKey(key);
+    setUploadProgress((p) => ({ ...p, [key]: 0 }));
     try {
-      return await uploadCourseContent(file, folder);
+      return await uploadCourseContent(file, folder, (fraction) => {
+        setUploadProgress((p) => ({ ...p, [key]: fraction }));
+      });
     } finally {
-      setUploadingKey(null);
+      setUploadProgress((p) => {
+        const next = { ...p };
+        delete next[key];
+        return next;
+      });
     }
   }
 
@@ -476,7 +482,7 @@ export function ContentPage() {
                         lessonEdits={lessonEdits}
                         resourceForms={resourceForms}
                         resourceEdits={resourceEdits}
-                        uploadingKey={uploadingKey}
+                        uploadProgress={uploadProgress}
                         onFormChange={(form) =>
                           setSectionEdits((edits) => ({ ...edits, [section.id]: form }))
                         }
@@ -657,7 +663,7 @@ function SectionEditor(props: {
   lessonEdits: Record<string, LessonForm>;
   resourceForms: Record<string, ResourceForm>;
   resourceEdits: Record<string, ResourceForm>;
-  uploadingKey: string | null;
+  uploadProgress: Record<string, number | undefined>;
   onFormChange: (form: SectionForm) => void;
   onLessonFormChange: (form: LessonForm) => void;
   onLessonEditChange: (lessonId: string, form: LessonForm) => void;
@@ -772,10 +778,22 @@ function SectionEditor(props: {
               }
             />
           </Field>
-          <div className="self-end">
-            <Button type="submit" variant="primary" disabled={!lessonForm.title.trim()}>
-              {props.uploadingKey === `new-lesson-${props.section.id}` ? text.common.uploading : text.content.addLesson}
+          <div className="self-end space-y-1">
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={!lessonForm.title.trim() || props.uploadProgress[`new-lesson-${props.section.id}`] !== undefined}
+            >
+              {props.uploadProgress[`new-lesson-${props.section.id}`] !== undefined ? text.common.uploading : text.content.addLesson}
             </Button>
+            {props.uploadProgress[`new-lesson-${props.section.id}`] !== undefined ? (
+              <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full bg-primary transition-all"
+                  style={{ width: `${Math.round((props.uploadProgress[`new-lesson-${props.section.id}`] ?? 0) * 100)}%` }}
+                />
+              </div>
+            ) : null}
           </div>
         </form>
 
@@ -863,10 +881,23 @@ function LessonEditor(
             }
           />
         </Field>
-        <div className="self-end">
-          <Button type="button" variant="primary" onClick={() => props.onLessonSave(props.lesson)}>
-            {props.uploadingKey === `lesson-${props.lesson.id}` ? text.common.uploading : text.content.saveLesson}
+        <div className="self-end space-y-1">
+          <Button
+            type="button"
+            variant="primary"
+            onClick={() => props.onLessonSave(props.lesson)}
+            disabled={props.uploadProgress[`lesson-${props.lesson.id}`] !== undefined}
+          >
+            {props.uploadProgress[`lesson-${props.lesson.id}`] !== undefined ? text.common.uploading : text.content.saveLesson}
           </Button>
+          {props.uploadProgress[`lesson-${props.lesson.id}`] !== undefined ? (
+            <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full bg-primary transition-all"
+                style={{ width: `${Math.round((props.uploadProgress[`lesson-${props.lesson.id}`] ?? 0) * 100)}%` }}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -929,14 +960,26 @@ function LessonEditor(
               }
             />
           </Field>
-          <div className="self-end">
+          <div className="self-end space-y-1">
             <Button
               type="submit"
               variant="primary"
-              disabled={!resourceForm.title.trim() || (!resourceForm.url.trim() && !resourceForm.file)}
+              disabled={
+                !resourceForm.title.trim() ||
+                (!resourceForm.url.trim() && !resourceForm.file) ||
+                props.uploadProgress[`new-resource-${props.lesson.id}`] !== undefined
+              }
             >
-              {props.uploadingKey === `new-resource-${props.lesson.id}` ? text.common.uploading : text.content.addResource}
+              {props.uploadProgress[`new-resource-${props.lesson.id}`] !== undefined ? text.common.uploading : text.content.addResource}
             </Button>
+            {props.uploadProgress[`new-resource-${props.lesson.id}`] !== undefined ? (
+              <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+                <div
+                  className="h-full bg-primary transition-all"
+                  style={{ width: `${Math.round((props.uploadProgress[`new-resource-${props.lesson.id}`] ?? 0) * 100)}%` }}
+                />
+              </div>
+            ) : null}
           </div>
         </form>
 
@@ -996,10 +1039,23 @@ function LessonEditor(
                   }
                 />
               </Field>
-              <div className="self-end">
-                <Button type="button" variant="primary" onClick={() => props.onResourceSave(resource)}>
-                  {props.uploadingKey === `resource-${resource.id}` ? text.common.uploading : text.common.save}
+              <div className="self-end space-y-1">
+                <Button
+                  type="button"
+                  variant="primary"
+                  onClick={() => props.onResourceSave(resource)}
+                  disabled={props.uploadProgress[`resource-${resource.id}`] !== undefined}
+                >
+                  {props.uploadProgress[`resource-${resource.id}`] !== undefined ? text.common.uploading : text.common.save}
                 </Button>
+                {props.uploadProgress[`resource-${resource.id}`] !== undefined ? (
+                  <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full bg-primary transition-all"
+                      style={{ width: `${Math.round((props.uploadProgress[`resource-${resource.id}`] ?? 0) * 100)}%` }}
+                    />
+                  </div>
+                ) : null}
               </div>
               <div className="self-end">
                 <Button type="button" variant="danger" onClick={() => props.onResourceDelete(resource)}>
