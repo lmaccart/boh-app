@@ -1,5 +1,8 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, arrayMove, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 import { text } from "@/constants/text";
 import {
@@ -38,18 +41,17 @@ const emptyLessons: Lesson[] = [];
 const emptyResources: LessonResource[] = [];
 
 type CourseForm = { title: string; startDate: string };
-type SectionForm = { title: string; type: SectionType; order: string; goLiveDate: string };
-type LessonForm = { title: string; order: string; videoUrl: string; videoFile: File | null };
+type SectionForm = { title: string; type: SectionType; goLiveDate: string };
+type LessonForm = { title: string; videoUrl: string; videoFile: File | null };
 type ResourceForm = { title: string; type: ResourceType; url: string; file: File | null };
 
 const emptyCourseForm: CourseForm = { title: "", startDate: "" };
 const emptySectionForm: SectionForm = {
   title: "",
   type: "welcome",
-  order: "0",
   goLiveDate: "",
 };
-const emptyLessonForm: LessonForm = { title: "", order: "0", videoUrl: "", videoFile: null };
+const emptyLessonForm: LessonForm = { title: "", videoUrl: "", videoFile: null };
 const emptyResourceForm: ResourceForm = { title: "", type: "pdf", url: "", file: null };
 
 function mutationMessage(error: unknown) {
@@ -68,10 +70,6 @@ function isoDateTimeOrNull(value: string) {
   return value ? new Date(value).toISOString() : null;
 }
 
-function orderValue(value: string) {
-  const parsed = Number.parseInt(value, 10);
-  return Number.isFinite(parsed) ? parsed : 0;
-}
 
 function Button({
   children,
@@ -169,13 +167,11 @@ export function ContentPage() {
           {
             title: section.title,
             type: section.type,
-            order: String(section.order),
             goLiveDate: dateTimeInputValue(section.go_live_date),
           },
         ]),
       ),
     );
-    setSectionForm((form) => ({ ...form, order: String(sections.length) }));
   }, [sections]);
 
   useEffect(() => {
@@ -185,7 +181,6 @@ export function ContentPage() {
           lesson.id,
           {
             title: lesson.title,
-            order: String(lesson.order),
             videoUrl: lesson.video_url ?? "",
             videoFile: null,
           },
@@ -196,10 +191,7 @@ export function ContentPage() {
       Object.fromEntries(
         sections.map((section) => [
           section.id,
-          forms[section.id] ?? {
-            ...emptyLessonForm,
-            order: String(lessonsForSection(lessons, section.id).length),
-          },
+          forms[section.id] ?? emptyLessonForm,
         ]),
       ),
     );
@@ -269,10 +261,10 @@ export function ContentPage() {
         course_id: selectedCourseId,
         title: sectionForm.title.trim(),
         type: sectionForm.type,
-        order: orderValue(sectionForm.order),
+        order: sections.length,
         go_live_date: sectionForm.type === "module" ? isoDateTimeOrNull(sectionForm.goLiveDate) : null,
       });
-      setSectionForm({ ...emptySectionForm, order: String(sections.length + 1) });
+      setSectionForm(emptySectionForm);
       await courseMutation.mutateAsync();
     });
   }
@@ -285,7 +277,7 @@ export function ContentPage() {
       await createLesson({
         section_id: sectionId,
         title: form.title.trim(),
-        order: orderValue(form.order),
+        order: lessonsForSection(lessons, sectionId).length,
         video_url: videoUrl || null,
       });
       setLessonForms((forms) => ({ ...forms, [sectionId]: emptyLessonForm }));
@@ -415,7 +407,7 @@ export function ContentPage() {
                 </div>
               </div>
 
-              <form className="grid gap-3 lg:grid-cols-[1fr_160px_110px_190px_auto]" onSubmit={submitSection}>
+              <form className="grid gap-3 lg:grid-cols-[1fr_160px_190px_auto]" onSubmit={submitSection}>
                 <Field label={text.content.fieldTitle}>
                   <input
                     className={inputClass}
@@ -439,14 +431,6 @@ export function ContentPage() {
                     ))}
                   </select>
                 </Field>
-                <Field label={text.content.fieldOrder}>
-                  <input
-                    className={inputClass}
-                    type="number"
-                    value={sectionForm.order}
-                    onChange={(event) => setSectionForm({ ...sectionForm, order: event.target.value })}
-                  />
-                </Field>
                 <Field label={text.content.moduleGoLive}>
                   <input
                     className={inputClass}
@@ -465,127 +449,136 @@ export function ContentPage() {
                 </div>
               </form>
 
-              <div className="space-y-4">
-                {sections.map((section, index) => (
-                  <SectionEditor
-                    key={section.id}
-                    section={section}
-                    form={sectionEdits[section.id] ?? emptySectionForm}
-                    lessons={lessonsForSection(lessons, section.id)}
-                    resources={resources}
-                    lessonForms={lessonForms}
-                    lessonEdits={lessonEdits}
-                    resourceForms={resourceForms}
-                    resourceEdits={resourceEdits}
-                    uploadingKey={uploadingKey}
-                    canMoveUp={index > 0}
-                    canMoveDown={index < sections.length - 1}
-                    onFormChange={(form) =>
-                      setSectionEdits((edits) => ({ ...edits, [section.id]: form }))
-                    }
-                    onLessonFormChange={(lessonForm) =>
-                      setLessonForms((forms) => ({ ...forms, [section.id]: lessonForm }))
-                    }
-                    onLessonEditChange={(lessonId, form) =>
-                      setLessonEdits((edits) => ({ ...edits, [lessonId]: form }))
-                    }
-                    onResourceFormChange={(lessonId, form) =>
-                      setResourceForms((forms) => ({ ...forms, [lessonId]: form }))
-                    }
-                    onResourceEditChange={(resourceId, form) =>
-                      setResourceEdits((edits) => ({ ...edits, [resourceId]: form }))
-                    }
-                    onSubmit={() =>
-                      void runMutation(async () => {
-                        const form = sectionEdits[section.id] ?? emptySectionForm;
-                        await updateSection(section.id, {
-                          title: form.title.trim(),
-                          type: form.type,
-                          order: orderValue(form.order),
-                          go_live_date:
-                            form.type === "module" ? isoDateTimeOrNull(form.goLiveDate) : null,
-                        });
-                        await courseMutation.mutateAsync();
-                      })
-                    }
-                    onDelete={() =>
-                      void runMutation(async () => {
-                        if (!window.confirm(text.content.confirmDeleteSection(section.title))) {
-                          return;
+              <DndContext
+                collisionDetection={closestCenter}
+                onDragEnd={(event: DragEndEvent) => {
+                  const { active, over } = event;
+                  if (!over || active.id === over.id) return;
+                  const oldIndex = sections.findIndex((s) => s.id === active.id);
+                  const newIndex = sections.findIndex((s) => s.id === over.id);
+                  void runMutation(async () => {
+                    const next = arrayMove(sections, oldIndex, newIndex).map((s, i) => ({ ...s, order: i }));
+                    await updateSectionOrders(next);
+                    await courseMutation.mutateAsync();
+                  });
+                }}
+              >
+                <SortableContext items={sections.map((s) => s.id)} strategy={verticalListSortingStrategy}>
+                  <div className="space-y-4">
+                    {sections.map((section) => (
+                      <SectionEditor
+                        key={section.id}
+                        section={section}
+                        form={sectionEdits[section.id] ?? emptySectionForm}
+                        lessons={lessonsForSection(lessons, section.id)}
+                        resources={resources}
+                        lessonForms={lessonForms}
+                        lessonEdits={lessonEdits}
+                        resourceForms={resourceForms}
+                        resourceEdits={resourceEdits}
+                        uploadingKey={uploadingKey}
+                        onFormChange={(form) =>
+                          setSectionEdits((edits) => ({ ...edits, [section.id]: form }))
                         }
-                        await deleteSection(section.id);
-                        await courseMutation.mutateAsync();
-                      })
-                    }
-                    onMove={(direction) =>
-                      void runMutation(async () => {
-                        await updateSectionOrders(reordered(sections, index, direction));
-                        await courseMutation.mutateAsync();
-                      })
-                    }
-                    onLessonSubmit={(event) => void submitLesson(section.id, event)}
-                    onLessonSave={(lesson) =>
-                      void runMutation(async () => {
-                        const form = lessonEdits[lesson.id] ?? emptyLessonForm;
-                        const videoUrl = await maybeUpload(
-                          form.videoFile,
-                          form.videoUrl,
-                          `lesson-${lesson.id}`,
-                          "videos",
-                        );
-                        await updateLesson(lesson.id, {
-                          title: form.title.trim(),
-                          order: orderValue(form.order),
-                          video_url: videoUrl || null,
-                        });
-                        await courseMutation.mutateAsync();
-                      })
-                    }
-                    onLessonDelete={(lesson) =>
-                      void runMutation(async () => {
-                        if (!window.confirm(text.content.confirmDeleteLesson(lesson.title))) {
-                          return;
+                        onLessonFormChange={(lessonForm) =>
+                          setLessonForms((forms) => ({ ...forms, [section.id]: lessonForm }))
                         }
-                        await deleteLesson(lesson.id);
-                        await courseMutation.mutateAsync();
-                      })
-                    }
-                    onLessonMove={(lessonIndex, direction) =>
-                      void runMutation(async () => {
-                        await updateLessonOrders(
-                          reordered(lessonsForSection(lessons, section.id), lessonIndex, direction),
-                        );
-                        await courseMutation.mutateAsync();
-                      })
-                    }
-                    onResourceSubmit={submitResource}
-                    onResourceSave={(resource) =>
-                      void runMutation(async () => {
-                        const form = resourceEdits[resource.id] ?? emptyResourceForm;
-                        const url = await maybeUpload(
-                          form.file,
-                          form.url,
-                          `resource-${resource.id}`,
-                          "resources",
-                        );
-                        await updateLessonResource(resource.id, {
-                          title: form.title.trim(),
-                          type: form.type,
-                          url,
-                        });
-                        await courseMutation.mutateAsync();
-                      })
-                    }
-                    onResourceDelete={(resource) =>
-                      void runMutation(async () => {
-                        if (!window.confirm(text.content.confirmDeleteResource(resource.title))) return;
-                        await deleteLessonResource(resource.id);
-                        await courseMutation.mutateAsync();
-                      })
-                    }
-                  />
-                ))}
-              </div>
+                        onLessonEditChange={(lessonId, form) =>
+                          setLessonEdits((edits) => ({ ...edits, [lessonId]: form }))
+                        }
+                        onResourceFormChange={(lessonId, form) =>
+                          setResourceForms((forms) => ({ ...forms, [lessonId]: form }))
+                        }
+                        onResourceEditChange={(resourceId, form) =>
+                          setResourceEdits((edits) => ({ ...edits, [resourceId]: form }))
+                        }
+                        onSubmit={() =>
+                          void runMutation(async () => {
+                            const form = sectionEdits[section.id] ?? emptySectionForm;
+                            await updateSection(section.id, {
+                              title: form.title.trim(),
+                              type: form.type,
+                              go_live_date:
+                                form.type === "module" ? isoDateTimeOrNull(form.goLiveDate) : null,
+                            });
+                            await courseMutation.mutateAsync();
+                          })
+                        }
+                        onDelete={() =>
+                          void runMutation(async () => {
+                            if (!window.confirm(text.content.confirmDeleteSection(section.title))) {
+                              return;
+                            }
+                            await deleteSection(section.id);
+                            await courseMutation.mutateAsync();
+                          })
+                        }
+                        onLessonsReorder={(fromId, toId) => {
+                          void runMutation(async () => {
+                            const sectionLessons = lessonsForSection(lessons, section.id);
+                            const oldIdx = sectionLessons.findIndex((l) => l.id === fromId);
+                            const newIdx = sectionLessons.findIndex((l) => l.id === toId);
+                            const next = arrayMove(sectionLessons, oldIdx, newIdx).map((l, i) => ({ ...l, order: i }));
+                            await updateLessonOrders(next);
+                            await courseMutation.mutateAsync();
+                          });
+                        }}
+                        onLessonSubmit={(event) => void submitLesson(section.id, event)}
+                        onLessonSave={(lesson) =>
+                          void runMutation(async () => {
+                            const form = lessonEdits[lesson.id] ?? emptyLessonForm;
+                            const videoUrl = await maybeUpload(
+                              form.videoFile,
+                              form.videoUrl,
+                              `lesson-${lesson.id}`,
+                              "videos",
+                            );
+                            await updateLesson(lesson.id, {
+                              title: form.title.trim(),
+                              video_url: videoUrl || null,
+                            });
+                            await courseMutation.mutateAsync();
+                          })
+                        }
+                        onLessonDelete={(lesson) =>
+                          void runMutation(async () => {
+                            if (!window.confirm(text.content.confirmDeleteLesson(lesson.title))) {
+                              return;
+                            }
+                            await deleteLesson(lesson.id);
+                            await courseMutation.mutateAsync();
+                          })
+                        }
+                        onResourceSubmit={submitResource}
+                        onResourceSave={(resource) =>
+                          void runMutation(async () => {
+                            const form = resourceEdits[resource.id] ?? emptyResourceForm;
+                            const url = await maybeUpload(
+                              form.file,
+                              form.url,
+                              `resource-${resource.id}`,
+                              "resources",
+                            );
+                            await updateLessonResource(resource.id, {
+                              title: form.title.trim(),
+                              type: form.type,
+                              url,
+                            });
+                            await courseMutation.mutateAsync();
+                          })
+                        }
+                        onResourceDelete={(resource) =>
+                          void runMutation(async () => {
+                            if (!window.confirm(text.content.confirmDeleteResource(resource.title))) return;
+                            await deleteLessonResource(resource.id);
+                            await courseMutation.mutateAsync();
+                          })
+                        }
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             </section>
           ) : null}
         </main>
@@ -645,6 +638,16 @@ function CourseEditor({
   );
 }
 
+function DragHandle({ label }: { label: string }) {
+  return (
+    <span aria-hidden="true" aria-label={label} className="flex flex-col gap-0.5">
+      <span className="block h-0.5 w-4 bg-current" />
+      <span className="block h-0.5 w-4 bg-current" />
+      <span className="block h-0.5 w-4 bg-current" />
+    </span>
+  );
+}
+
 function SectionEditor(props: {
   section: CourseSection;
   form: SectionForm;
@@ -655,8 +658,6 @@ function SectionEditor(props: {
   resourceForms: Record<string, ResourceForm>;
   resourceEdits: Record<string, ResourceForm>;
   uploadingKey: string | null;
-  canMoveUp: boolean;
-  canMoveDown: boolean;
   onFormChange: (form: SectionForm) => void;
   onLessonFormChange: (form: LessonForm) => void;
   onLessonEditChange: (lessonId: string, form: LessonForm) => void;
@@ -664,40 +665,44 @@ function SectionEditor(props: {
   onResourceEditChange: (resourceId: string, form: ResourceForm) => void;
   onSubmit: () => void;
   onDelete: () => void;
-  onMove: (direction: "up" | "down") => void;
+  onLessonsReorder: (fromId: string, toId: string) => void;
   onLessonSubmit: (event: FormEvent<HTMLFormElement>) => void;
   onLessonSave: (lesson: Lesson) => void;
   onLessonDelete: (lesson: Lesson) => void;
-  onLessonMove: (lessonIndex: number, direction: "up" | "down") => void;
   onResourceSubmit: (lessonId: string, event: FormEvent<HTMLFormElement>) => void;
   onResourceSave: (resource: LessonResource) => void;
   onResourceDelete: (resource: LessonResource) => void;
 }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.section.id });
+  const style = { transform: CSS.Transform.toString(transform), transition };
   const lessonForm = props.lessonForms[props.section.id] ?? emptyLessonForm;
 
   return (
-    <article className="rounded-card border border-border bg-background p-4">
+    <article ref={setNodeRef} style={style} className="rounded-card border border-border bg-background p-4">
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="font-semibold text-foreground">{props.section.title}</h3>
-          <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
-            {text.content.sectionCaption(props.section.type, props.section.order)}
-          </p>
+        <div className="flex items-start gap-2">
+          <button
+            type="button"
+            aria-label="Drag to reorder section"
+            className="mt-0.5 cursor-grab touch-none text-muted-foreground"
+            {...attributes}
+            {...listeners}
+          >
+            <DragHandle label="Drag to reorder section" />
+          </button>
+          <div>
+            <h3 className="font-semibold text-foreground">{props.section.title}</h3>
+            <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
+              {text.content.sectionCaption(props.section.type, props.section.order)}
+            </p>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button type="button" onClick={() => props.onMove("up")} disabled={!props.canMoveUp}>
-            {text.content.moveUp}
-          </Button>
-          <Button type="button" onClick={() => props.onMove("down")} disabled={!props.canMoveDown}>
-            {text.content.moveDown}
-          </Button>
-          <Button type="button" variant="danger" onClick={props.onDelete}>
-            {text.common.delete}
-          </Button>
-        </div>
+        <Button type="button" variant="danger" onClick={props.onDelete}>
+          {text.common.delete}
+        </Button>
       </div>
 
-      <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_150px_100px_190px_auto]">
+      <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_150px_190px_auto]">
         <Field label={text.content.fieldTitle}>
           <input
             className={inputClass}
@@ -721,14 +726,6 @@ function SectionEditor(props: {
             ))}
           </select>
         </Field>
-        <Field label={text.content.fieldOrder}>
-          <input
-            className={inputClass}
-            type="number"
-            value={props.form.order}
-            onChange={(event) => props.onFormChange({ ...props.form, order: event.target.value })}
-          />
-        </Field>
         <Field label={text.content.moduleGoLive}>
           <input
             className={inputClass}
@@ -747,21 +744,13 @@ function SectionEditor(props: {
 
       <div className="mt-6 space-y-4 border-t border-border pt-4">
         <h4 className="font-medium text-foreground">{text.content.lessonsHeading}</h4>
-        <form className="grid gap-3 lg:grid-cols-[1fr_90px_1fr_1fr_auto]" onSubmit={props.onLessonSubmit}>
+        <form className="grid gap-3 lg:grid-cols-[1fr_1fr_1fr_auto]" onSubmit={props.onLessonSubmit}>
           <Field label={text.content.fieldTitle}>
             <input
               className={inputClass}
               required
               value={lessonForm.title}
               onChange={(event) => props.onLessonFormChange({ ...lessonForm, title: event.target.value })}
-            />
-          </Field>
-          <Field label={text.content.fieldOrder}>
-            <input
-              className={inputClass}
-              type="number"
-              value={lessonForm.order}
-              onChange={(event) => props.onLessonFormChange({ ...lessonForm, order: event.target.value })}
             />
           </Field>
           <Field label={text.content.videoUrl}>
@@ -790,50 +779,58 @@ function SectionEditor(props: {
           </div>
         </form>
 
-        {props.lessons.map((lesson, index) => (
-          <LessonEditor key={lesson.id} lesson={lesson} lessonIndex={index} {...props} />
-        ))}
+        <DndContext
+          collisionDetection={closestCenter}
+          onDragEnd={(event: DragEndEvent) => {
+            const { active, over } = event;
+            if (!over || active.id === over.id) return;
+            props.onLessonsReorder(String(active.id), String(over.id));
+          }}
+        >
+          <SortableContext items={props.lessons.map((l) => l.id)} strategy={verticalListSortingStrategy}>
+            {props.lessons.map((lesson) => (
+              <LessonEditor key={lesson.id} lesson={lesson} {...props} />
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
     </article>
   );
 }
 
 function LessonEditor(
-  props: Parameters<typeof SectionEditor>[0] & { lesson: Lesson; lessonIndex: number },
+  props: Parameters<typeof SectionEditor>[0] & { lesson: Lesson },
 ) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: props.lesson.id });
+  const style = { transform: CSS.Transform.toString(transform), transition };
   const form = props.lessonEdits[props.lesson.id] ?? emptyLessonForm;
   const lessonResources = props.resources.filter((resource) => resource.lesson_id === props.lesson.id);
   const resourceForm = props.resourceForms[props.lesson.id] ?? emptyResourceForm;
 
   return (
-    <div className="rounded-card border border-border bg-card p-4">
+    <div ref={setNodeRef} style={style} className="rounded-card border border-border bg-card p-4">
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <h5 className="font-medium text-foreground">{props.lesson.title}</h5>
-          <p className="mt-1 text-xs text-muted-foreground">{text.content.fieldOrder} {props.lesson.order}</p>
-        </div>
-        <div className="flex gap-2">
-          <Button
+        <div className="flex items-start gap-2">
+          <button
             type="button"
-            onClick={() => props.onLessonMove(props.lessonIndex, "up")}
-            disabled={props.lessonIndex === 0}
+            aria-label="Drag to reorder lesson"
+            className="mt-0.5 cursor-grab touch-none text-muted-foreground"
+            {...attributes}
+            {...listeners}
           >
-            {text.content.moveUp}
-          </Button>
-          <Button
-            type="button"
-            onClick={() => props.onLessonMove(props.lessonIndex, "down")}
-            disabled={props.lessonIndex === props.lessons.length - 1}
-          >
-            {text.content.moveDown}
-          </Button>
-          <Button type="button" variant="danger" onClick={() => props.onLessonDelete(props.lesson)}>
-            {text.common.delete}
-          </Button>
+            <DragHandle label="Drag to reorder lesson" />
+          </button>
+          <div>
+            <h5 className="font-medium text-foreground">{props.lesson.title}</h5>
+            <p className="mt-1 text-xs text-muted-foreground">{text.content.fieldOrder} {props.lesson.order}</p>
+          </div>
         </div>
+        <Button type="button" variant="danger" onClick={() => props.onLessonDelete(props.lesson)}>
+          {text.common.delete}
+        </Button>
       </div>
 
-      <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_90px_1fr_1fr_auto]">
+      <div className="mt-4 grid gap-3 lg:grid-cols-[1fr_1fr_1fr_auto]">
         <Field label={text.content.fieldTitle}>
           <input
             className={inputClass}
@@ -841,16 +838,6 @@ function LessonEditor(
             value={form.title}
             onChange={(event) =>
               props.onLessonEditChange(props.lesson.id, { ...form, title: event.target.value })
-            }
-          />
-        </Field>
-        <Field label={text.content.fieldOrder}>
-          <input
-            className={inputClass}
-            type="number"
-            value={form.order}
-            onChange={(event) =>
-              props.onLessonEditChange(props.lesson.id, { ...form, order: event.target.value })
             }
           />
         </Field>
@@ -1029,12 +1016,4 @@ function LessonEditor(
 
 function lessonsForSection(lessons: Lesson[], sectionId: string) {
   return lessons.filter((lesson) => lesson.section_id === sectionId);
-}
-
-function reordered<T extends { id: string }>(items: T[], index: number, direction: "up" | "down") {
-  const next = [...items];
-  const targetIndex = direction === "up" ? index - 1 : index + 1;
-  if (targetIndex < 0 || targetIndex >= next.length) return items.map((item, order) => ({ ...item, order }));
-  [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
-  return next.map((item, order) => ({ ...item, order }));
 }

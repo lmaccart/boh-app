@@ -1,3 +1,4 @@
+import { arrayMove } from "@dnd-kit/sortable";
 import { createCourse, deleteLesson, uploadCourseContent } from "./contentData";
 
 const mocks = vi.hoisted(() => ({
@@ -44,6 +45,20 @@ test("deleteLesson surfaces Supabase mutation errors", async () => {
   await expect(deleteLesson("lesson-1")).rejects.toThrow("RLS denied delete");
   expect(mocks.from).toHaveBeenCalledWith("lessons");
   expect(eq).toHaveBeenCalledWith("id", "lesson-1");
+});
+
+test("drag-to-reorder: arrayMove reindexes order correctly", () => {
+  const items = [
+    { id: "a", order: 0 },
+    { id: "b", order: 1 },
+    { id: "c", order: 2 },
+  ];
+  const moved = arrayMove(items, 0, 2).map((item, i) => ({ ...item, order: i }));
+  expect(moved).toEqual([
+    { id: "b", order: 0 },
+    { id: "c", order: 1 },
+    { id: "a", order: 2 },
+  ]);
 });
 
 test("uploadCourseContent uploads to course-content and returns the public URL", async () => {

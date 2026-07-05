@@ -138,8 +138,6 @@ export const text = {
     selectedCourseHeading: "Selected course",
     deleteCourse: "Delete course",
     saveCourse: "Save course",
-    moveUp: "Move up",
-    moveDown: "Move down",
     saveSection: "Save section",
     lessonsHeading: "Lessons",
     videoUrl: "Video URL",
