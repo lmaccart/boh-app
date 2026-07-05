@@ -79,7 +79,9 @@ function buildConversations({
         user,
         messages: sortedMessages,
         latestMessage,
-        hasUnreadIndicator: !staffIds.has(latestMessage.sender_id),
+        hasUnreadIndicator: sortedMessages.some(
+          (m) => !staffIds.has(m.sender_id) && m.read_at === null,
+        ),
       };
     })
     .sort(
@@ -215,6 +217,16 @@ export function InboxPage() {
                   onClick={() => {
                     setSelectedUserId(conversation.userId);
                     sendReply.reset();
+                    if (conversation.hasUnreadIndicator) {
+                      void supabase
+                        .from("direct_messages")
+                        .update({ read_at: new Date().toISOString() })
+                        .eq("sender_id", conversation.userId)
+                        .is("read_at", null)
+                        .then(() => {
+                          void queryClient.invalidateQueries({ queryKey: inboxQueryKey });
+                        });
+                    }
                   }}
                 >
                   <div className="flex items-start justify-between gap-3">

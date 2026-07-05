@@ -21,6 +21,7 @@ const mocks = vi.hoisted(() => ({
       recipient_id: "admin-1",
       body: "Can I ask about the course?",
       created_at: "2026-07-02T11:00:00.000Z",
+      read_at: null,
     },
     {
       id: "m2",
@@ -28,6 +29,7 @@ const mocks = vi.hoisted(() => ({
       recipient_id: "user-a",
       body: "Thank you for reaching out.",
       created_at: "2026-07-02T10:05:00.000Z",
+      read_at: null,
     },
     {
       id: "m1",
@@ -35,6 +37,7 @@ const mocks = vi.hoisted(() => ({
       recipient_id: "admin-1",
       body: "I need help with today.",
       created_at: "2026-07-02T10:00:00.000Z",
+      read_at: "2026-07-02T10:02:00.000Z",
     },
   ],
   insertedRows: [] as Array<{ sender_id: string; recipient_id: string; body: string }>,
@@ -80,6 +83,11 @@ function mockSupabase() {
         select: () => ({
           or: () => ({
             order: () => Promise.resolve({ data: mocks.messages, error: null }),
+          }),
+        }),
+        update: (_values: Record<string, unknown>) => ({
+          eq: () => ({
+            is: () => Promise.resolve({ data: null, error: null }),
           }),
         }),
         insert: (row: { sender_id: string; recipient_id: string; body: string }) => {
