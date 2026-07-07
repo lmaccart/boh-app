@@ -73,7 +73,7 @@ export default function ResourcesScreen() {
 
   function open(item: ResolvedFavorite) {
     if (item.lessonId) {
-      router.push(`/courses/lesson/${item.lessonId}`);
+      router.push(`/lesson/${item.lessonId}`);
     } else if (item.url) {
       WebBrowser.openBrowserAsync(item.url);
     }
