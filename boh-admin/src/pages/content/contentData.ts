@@ -1,4 +1,6 @@
-import { supabase } from "@/lib/supabase";
+import { text } from "@/constants/text";
+import * as tus from "tus-js-client";
+import { supabase, supabaseUrl } from "@/lib/supabase";
 import type { Enums, Tables, TablesInsert, TablesUpdate } from "@/types/database.types";
 
 export type Course = Tables<"courses">;
@@ -26,7 +28,7 @@ type SupabaseResult<T> = { data: T; error: { message: string } | null };
 
 function requireData<T>({ data, error }: SupabaseResult<T>): NonNullable<T> {
   if (error) throw new Error(error.message);
-  if (data === null) throw new Error("Supabase returned no data.");
+  if (data === null) throw new Error(text.common.noData);
   return data as NonNullable<T>;
 }
 
@@ -140,14 +142,43 @@ export async function updateLessonOrders(lessons: Pick<Lesson, "id" | "order">[]
   await Promise.all(lessons.map((lesson) => updateLesson(lesson.id, { order: lesson.order })));
 }
 
-export async function uploadCourseContent(file: File, folder: "videos" | "resources") {
+export async function uploadCourseContent(
+  file: File,
+  folder: "videos" | "resources",
+  onProgress?: (fraction: number) => void,
+): Promise<string> {
   const path = `${folder}/${crypto.randomUUID()}-${cleanPathName(file.name)}`;
-  const { data, error } = await supabase.storage.from("course-content").upload(path, file, {
-    contentType: file.type || undefined,
-    upsert: false,
-  });
-  if (error) throw new Error(error.message);
+  const { data: authData } = await supabase.auth.getSession();
+  const accessToken = authData.session?.access_token ?? "";
 
-  const { data: publicUrlData } = supabase.storage.from("course-content").getPublicUrl(data.path);
+  await new Promise<void>((resolve, reject) => {
+    const upload = new tus.Upload(file, {
+      endpoint: `${supabaseUrl}/storage/v1/upload/resumable`,
+      retryDelays: [0, 3000, 5000, 10000, 20000],
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        "x-upsert": "false",
+      },
+      uploadDataDuringCreation: true,
+      removeFingerprintOnSuccess: true,
+      chunkSize: 6 * 1024 * 1024,
+      metadata: {
+        bucketName: "course-content",
+        objectName: path,
+        contentType: file.type || "application/octet-stream",
+        cacheControl: "3600",
+      },
+      onError: reject,
+      onProgress: (sent, total) => onProgress?.(total > 0 ? sent / total : 0),
+      onSuccess: () => resolve(),
+    });
+
+    void upload.findPreviousUploads().then((prev) => {
+      if (prev.length) upload.resumeFromPreviousUpload(prev[0]);
+      upload.start();
+    });
+  });
+
+  const { data: publicUrlData } = supabase.storage.from("course-content").getPublicUrl(path);
   return publicUrlData.publicUrl;
 }

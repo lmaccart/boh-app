@@ -1,5 +1,6 @@
 - Change `RESEND_FROM` env var to use a verified Resend domain
   - Update the emails in supabase/functions/reach-out-email/index.ts to send to both of tarryn's emails
+  - get api key for funnelbreezy and add using supabase secrets set FUNNELBREEZY_WEBHOOK_URL=https://your-actual-url
 - Add the admin portal URLs to Supabase Auth -> URL Configuration -> Redirect URLs:
   - `http://localhost:5173` (dev)
   - the deployed boh-admin domain (prod)

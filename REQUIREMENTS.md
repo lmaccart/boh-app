@@ -77,5 +77,5 @@
 - All colors in the app will be pulled from the Nativewind config, and will be consistent across the app
 - All text will be pulled from a central text file, and will be consistent across the app
   - this will remain english only
-- Offline access to course content is a v2 feature
+- Offline access is not included in the initial build
 - Privacy Policy and Terms of Service will be linked in the settings page, and will be hosted on a separate website, for now link to <https://thebizofhappiness.com/legal/#privacy>, <https://thebizofhappiness.com/legal/#terms>

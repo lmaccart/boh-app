@@ -1,15 +1,24 @@
+import { arrayMove } from "@dnd-kit/sortable";
 import { createCourse, deleteLesson, uploadCourseContent } from "./contentData";
 
 const mocks = vi.hoisted(() => ({
   from: vi.fn(),
   storageFrom: vi.fn(),
+  getSession: vi.fn(),
+  tusUpload: vi.fn(),
 }));
 
 vi.mock("@/lib/supabase", () => ({
   supabase: {
     from: mocks.from,
     storage: { from: mocks.storageFrom },
+    auth: { getSession: mocks.getSession },
   },
+  supabaseUrl: "https://example.supabase.co",
+}));
+
+vi.mock("tus-js-client", () => ({
+  Upload: mocks.tusUpload,
 }));
 
 beforeEach(() => {
@@ -46,26 +55,59 @@ test("deleteLesson surfaces Supabase mutation errors", async () => {
   expect(eq).toHaveBeenCalledWith("id", "lesson-1");
 });
 
-test("uploadCourseContent uploads to course-content and returns the public URL", async () => {
+test("drag-to-reorder: arrayMove reindexes order correctly", () => {
+  const items = [
+    { id: "a", order: 0 },
+    { id: "b", order: 1 },
+    { id: "c", order: 2 },
+  ];
+  const moved = arrayMove(items, 0, 2).map((item, i) => ({ ...item, order: i }));
+  expect(moved).toEqual([
+    { id: "b", order: 0 },
+    { id: "c", order: 1 },
+    { id: "a", order: 2 },
+  ]);
+});
+
+test("uploadCourseContent uses TUS resumable upload and returns public URL", async () => {
   vi.spyOn(crypto, "randomUUID").mockReturnValue("00000000-0000-4000-8000-000000000001");
-  const upload = vi.fn().mockResolvedValue({
-    data: { path: "videos/00000000-0000-4000-8000-000000000001-intro.mp4" },
-    error: null,
+
+  mocks.getSession.mockResolvedValue({
+    data: { session: { access_token: "test-token" } },
   });
+
+  mocks.tusUpload.mockImplementation(function(_file: File, opts: { onSuccess: () => void }) {
+    return {
+      findPreviousUploads: () => Promise.resolve([]),
+      resumeFromPreviousUpload: vi.fn(),
+      start() { opts.onSuccess(); },
+    };
+  });
+
   const getPublicUrl = vi.fn().mockReturnValue({
-    data: { publicUrl: "https://example.supabase.co/storage/v1/object/public/course-content/intro.mp4" },
+    data: { publicUrl: "https://example.supabase.co/storage/v1/object/public/course-content/videos/00000000-0000-4000-8000-000000000001-intro.mp4" },
   });
-  mocks.storageFrom.mockReturnValue({ upload, getPublicUrl });
+  mocks.storageFrom.mockReturnValue({ getPublicUrl });
 
   const file = new File(["video"], "Intro.mp4", { type: "video/mp4" });
-  await expect(uploadCourseContent(file, "videos")).resolves.toBe(
-    "https://example.supabase.co/storage/v1/object/public/course-content/intro.mp4",
+  const onProgress = vi.fn();
+
+  await expect(uploadCourseContent(file, "videos", onProgress)).resolves.toBe(
+    "https://example.supabase.co/storage/v1/object/public/course-content/videos/00000000-0000-4000-8000-000000000001-intro.mp4",
   );
 
-  expect(mocks.storageFrom).toHaveBeenCalledWith("course-content");
-  expect(upload).toHaveBeenCalledWith(
-    "videos/00000000-0000-4000-8000-000000000001-intro.mp4",
+  expect(mocks.getSession).toHaveBeenCalled();
+  expect(mocks.tusUpload).toHaveBeenCalledWith(
     file,
-    { contentType: "video/mp4", upsert: false },
+    expect.objectContaining({
+      endpoint: "https://example.supabase.co/storage/v1/upload/resumable",
+      headers: expect.objectContaining({ authorization: "Bearer test-token" }),
+      metadata: expect.objectContaining({
+        bucketName: "course-content",
+        objectName: "videos/00000000-0000-4000-8000-000000000001-intro.mp4",
+      }),
+    }),
   );
+  expect(mocks.storageFrom).toHaveBeenCalledWith("course-content");
+  expect(getPublicUrl).toHaveBeenCalledWith("videos/00000000-0000-4000-8000-000000000001-intro.mp4");
 });

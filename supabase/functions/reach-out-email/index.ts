@@ -48,28 +48,51 @@ Deno.serve(async (req: Request) => {
     const senderName = sender?.name || sender?.email || "A user";
     const messageBody = String(record["body"] ?? "");
 
-    const res = await fetch(RESEND_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${Deno.env.get("RESEND_API_KEY")}`,
-      },
-      body: JSON.stringify({
-        from: Deno.env.get("RESEND_FROM"),
-        to: TO_ADDRESSES,
-        subject: `New message from ${senderName}`,
-        text: [
-          `${senderName} sent you a message via the Business of Happiness app:`,
-          "",
-          `"${messageBody}"`,
-          "",
-          "Reply in the app to respond.",
-        ].join("\n"),
-      }),
-    });
+    const subject = `New message from ${senderName}`;
+    const bodyText = [
+      `${senderName} sent you a message via the Business of Happiness app:`,
+      "",
+      `"${messageBody}"`,
+      "",
+      "Reply in the app to respond.",
+    ].join("\n");
 
-    if (!res.ok) {
-      console.error("Resend error:", await res.text());
+    const provider = Deno.env.get("EMAIL_PROVIDER") ?? "resend";
+
+    if (provider === "funnelbreezy") {
+      const res = await fetch(Deno.env.get("FUNNELBREEZY_WEBHOOK_URL")!, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sender_name: senderName,
+          sender_email: sender?.email ?? "",
+          message: messageBody,
+          subject,
+          body_text: bodyText,
+        }),
+      });
+
+      if (!res.ok) {
+        console.error("FunnelBreezy error:", await res.text());
+      }
+    } else {
+      const res = await fetch(RESEND_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Deno.env.get("RESEND_API_KEY")}`,
+        },
+        body: JSON.stringify({
+          from: Deno.env.get("RESEND_FROM"),
+          to: TO_ADDRESSES,
+          subject,
+          text: bodyText,
+        }),
+      });
+
+      if (!res.ok) {
+        console.error("Resend error:", await res.text());
+      }
     }
   } catch (err) {
     console.error("reach-out-email error:", err);

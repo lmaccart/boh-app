@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { FormEvent } from "react";
 
+import { text } from "@/constants/text";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database.types";
 
@@ -9,30 +10,6 @@ type WhitelistRow = Pick<Tables<"course_whitelist">, "course_id" | "created_at" 
 type User = Pick<Tables<"users">, "id" | "email" | "name">;
 
 type WhitelistedUser = WhitelistRow & { user: User | null };
-
-const copy = {
-  title: "Whitelist",
-  subtitle: "Manage course access by adding existing user accounts to each course.",
-  courseLabel: "Course",
-  loading: "Loading whitelist",
-  loadError: "Could not load whitelist data. Please try again.",
-  emptyCourses: "Create a course before adding users to a whitelist.",
-  emptyUsers: "No users have access to this course yet.",
-  addTitle: "Add user access",
-  emailLabel: "User email",
-  emailPlaceholder: "student@example.com",
-  add: "Add to whitelist",
-  adding: "Adding",
-  remove: "Remove",
-  removing: "Removing",
-  emailRequired: "Enter an email address before adding a user.",
-  userNotFound: "No user account matches that email. The account must exist first.",
-  courseRequired: "Choose a course before adding a user.",
-  confirmRemove: "Remove this user from the course whitelist?",
-  mutationErrorPrefix: "Supabase error:",
-  unknownUser: "Unknown user",
-  accessSince: "Access since",
-};
 
 export function WhitelistPage() {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -94,7 +71,7 @@ export function WhitelistPage() {
         await loadData();
       } catch (error) {
         if (cancelled) return;
-        setLoadError(error instanceof Error ? error.message : copy.loadError);
+        setLoadError(error instanceof Error ? error.message : text.whitelist.loadError);
         setIsLoading(false);
       }
     }
@@ -112,11 +89,11 @@ export function WhitelistPage() {
 
     const trimmedEmail = email.trim().toLowerCase();
     if (!selectedCourseId) {
-      setMutationError(copy.courseRequired);
+      setMutationError(text.whitelist.courseRequired);
       return;
     }
     if (!trimmedEmail) {
-      setMutationError(copy.emailRequired);
+      setMutationError(text.whitelist.emailRequired);
       return;
     }
 
@@ -133,7 +110,7 @@ export function WhitelistPage() {
       return;
     }
     if (!userResult.data) {
-      setMutationError(copy.userNotFound);
+      setMutationError(text.whitelist.userNotFound);
       setIsAdding(false);
       return;
     }
@@ -153,7 +130,7 @@ export function WhitelistPage() {
     try {
       await loadData();
     } catch (error) {
-      setLoadError(error instanceof Error ? error.message : copy.loadError);
+      setLoadError(error instanceof Error ? error.message : text.whitelist.loadError);
       setIsLoading(false);
     } finally {
       setIsAdding(false);
@@ -161,7 +138,7 @@ export function WhitelistPage() {
   }
 
   async function handleRemove(row: WhitelistedUser) {
-    if (!window.confirm(copy.confirmRemove)) return;
+    if (!window.confirm(text.whitelist.confirmRemove)) return;
 
     setMutationError(null);
     setRemovingUserId(row.user_id);
@@ -186,21 +163,21 @@ export function WhitelistPage() {
   return (
     <div className="max-w-5xl space-y-8">
       <header>
-        <h1 className="text-2xl font-semibold text-foreground">{copy.title}</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{copy.subtitle}</p>
+        <h1 className="text-2xl font-semibold text-foreground">{text.whitelist.title}</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{text.whitelist.subtitle}</p>
       </header>
 
       {loadError ? (
         <p className="rounded-card border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-          {copy.loadError} {loadError}
+          {text.whitelist.loadError} {loadError}
         </p>
       ) : null}
 
-      {isLoading ? <p className="text-sm text-muted-foreground">{copy.loading}</p> : null}
+      {isLoading ? <p className="text-sm text-muted-foreground">{text.whitelist.loading}</p> : null}
 
       {!isLoading && courses.length === 0 ? (
         <p className="rounded-card border border-border bg-card px-4 py-6 text-sm text-muted-foreground">
-          {copy.emptyCourses}
+          {text.whitelist.emptyCourses}
         </p>
       ) : null}
 
@@ -210,7 +187,7 @@ export function WhitelistPage() {
             <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(280px,360px)]">
               <div>
                 <label className="block text-sm font-medium text-foreground" htmlFor="course">
-                  {copy.courseLabel}
+                  {text.whitelist.courseLabel}
                 </label>
                 <select
                   id="course"
@@ -226,22 +203,21 @@ export function WhitelistPage() {
                 </select>
                 {selectedCourse ? (
                   <p className="mt-3 text-sm text-muted-foreground">
-                    {selectedUsers.length} user{selectedUsers.length === 1 ? "" : "s"} whitelisted
-                    {selectedCourse.start_date ? ` for the ${selectedCourse.start_date} start date` : ""}.
+                    {text.whitelist.userCountCaption(selectedUsers.length, selectedCourse.start_date)}
                   </p>
                 ) : null}
               </div>
 
               <form onSubmit={(event) => void handleAdd(event)}>
-                <h2 className="text-sm font-semibold text-foreground">{copy.addTitle}</h2>
+                <h2 className="text-sm font-semibold text-foreground">{text.whitelist.addTitle}</h2>
                 <label className="mt-3 block text-sm font-medium text-foreground" htmlFor="email">
-                  {copy.emailLabel}
+                  {text.whitelist.emailLabel}
                 </label>
                 <div className="mt-2 flex gap-2">
                   <input
                     id="email"
                     className="min-w-0 flex-1 rounded-card border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    placeholder={copy.emailPlaceholder}
+                    placeholder={text.whitelist.emailPlaceholder}
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
@@ -251,7 +227,7 @@ export function WhitelistPage() {
                     className="rounded-card bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={isAdding}
                   >
-                    {isAdding ? copy.adding : copy.add}
+                    {isAdding ? text.whitelist.adding : text.whitelist.add}
                   </button>
                 </div>
               </form>
@@ -259,18 +235,18 @@ export function WhitelistPage() {
 
             {mutationError ? (
               <p className="mt-5 rounded-card border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                {copy.mutationErrorPrefix} {mutationError}
+                {text.common.supabaseErrorPrefix} {mutationError}
               </p>
             ) : null}
           </section>
 
           <section className="overflow-hidden rounded-card border border-border bg-card shadow-sm">
             {selectedUsers.length === 0 ? (
-              <p className="px-5 py-8 text-sm text-muted-foreground">{copy.emptyUsers}</p>
+              <p className="px-5 py-8 text-sm text-muted-foreground">{text.whitelist.emptyUsers}</p>
             ) : (
               <ul className="divide-y divide-border">
                 {selectedUsers.map((row) => {
-                  const userName = row.user?.name || row.user?.email || copy.unknownUser;
+                  const userName = row.user?.name || row.user?.email || text.common.unknownUser;
                   return (
                     <li key={`${row.course_id}:${row.user_id}`} className="flex gap-4 p-5">
                       <div className="min-w-0 flex-1">
@@ -279,7 +255,7 @@ export function WhitelistPage() {
                           {row.user?.email ?? row.user_id}
                         </p>
                         <p className="mt-2 text-xs text-muted-foreground">
-                          {copy.accessSince} {new Date(row.created_at).toLocaleDateString()}
+                          {text.whitelist.accessSince} {new Date(row.created_at).toLocaleDateString()}
                         </p>
                       </div>
                       <button
@@ -288,7 +264,7 @@ export function WhitelistPage() {
                         disabled={removingUserId === row.user_id}
                         onClick={() => void handleRemove(row)}
                       >
-                        {removingUserId === row.user_id ? copy.removing : copy.remove}
+                        {removingUserId === row.user_id ? text.whitelist.removing : text.whitelist.remove}
                       </button>
                     </li>
                   );

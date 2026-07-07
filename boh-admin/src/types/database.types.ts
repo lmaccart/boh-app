@@ -217,6 +217,7 @@ export type Database = {
           body: string
           created_at: string
           id: string
+          read_at: string | null
           recipient_id: string
           sender_id: string
         }
@@ -224,6 +225,7 @@ export type Database = {
           body: string
           created_at?: string
           id?: string
+          read_at?: string | null
           recipient_id: string
           sender_id: string
         }
@@ -231,6 +233,7 @@ export type Database = {
           body?: string
           created_at?: string
           id?: string
+          read_at?: string | null
           recipient_id?: string
           sender_id?: string
         }
