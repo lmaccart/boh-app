@@ -182,5 +182,3 @@ Date: ______________________________
 ---
 
 **Exhibit A:** Project Requirements (`REQUIREMENTS.md`), attached and incorporated by reference.
-
-*This document is a template prepared for discussion purposes and does not constitute legal advice. Both Parties should have it reviewed by a licensed attorney before signing.*
