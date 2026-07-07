@@ -31,7 +31,7 @@ function SectionBlock({ section }: { section: CourseSectionRow }) {
               title={lesson.title}
               chevron
               onPress={() =>
-                router.push(`/courses/lesson/${lesson.id}?type=${section.type}&prev=${prev}`)
+                router.push(`/lesson/${lesson.id}?type=${section.type}&prev=${prev}`)
               }
             />
           );

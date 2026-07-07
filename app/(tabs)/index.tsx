@@ -69,7 +69,7 @@ export default function StartHereScreen() {
                     seconds: String(Math.round(item.position_seconds)),
                   })}
                   chevron
-                  onPress={() => router.push(`/courses/lesson/${item.lesson!.id}`)}
+                  onPress={() => router.push(`/lesson/${item.lesson!.id}`)}
                 />
               ) : null,
             )

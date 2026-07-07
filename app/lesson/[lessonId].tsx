@@ -82,7 +82,7 @@ export default function LessonPlayerScreen() {
   // correct position.
   if (lesson.isLoading || progress.isLoading) {
     return (
-      <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+      <SafeAreaView className="flex-1 bg-background" edges={["top", "bottom"]}>
         <Spinner fill />
       </SafeAreaView>
     );
@@ -92,7 +92,7 @@ export default function LessonPlayerScreen() {
   const initial = progress.data?.position_seconds ?? 0;
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={["top"]}>
+    <SafeAreaView className="flex-1 bg-background" edges={["top", "bottom"]}>
       <View className="flex-row items-center gap-2 border-b border-border bg-background px-4 py-3">
         <IconButton name="chevron-back" accessibilityLabel="Back" onPress={() => router.back()} />
         <Text className="flex-1 text-lg font-bold text-foreground" numberOfLines={1}>
