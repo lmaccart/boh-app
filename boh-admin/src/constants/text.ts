@@ -40,12 +40,15 @@ export const text = {
     latestInbound: "Latest message from user",
     latestOutbound: "Latest reply from staff",
     sessionRequired: "You must be signed in to reply.",
+    tarrynAccountMissing:
+      "No Tarryn account was found. Replies cannot be sent until a user with the Tarryn role exists.",
   },
   conversation: {
     emptyTitle: "Select a conversation",
     emptyBody: "Choose a user from the inbox to view their full message history.",
     replyLabel: "Reply message",
-    replyPlaceholder: "Write a reply to send as your admin account",
+    replyPlaceholder: "Write a reply to send as Tarryn",
+    sentByPrefix: "Sent by",
     send: "Send reply",
     sending: "Sending",
     mutationError: "Reply could not be sent",

@@ -24,6 +24,7 @@ export function ConversationView({
   user,
   messages,
   staffIds,
+  staffById,
   onSend,
   isSending,
   sendError,
@@ -31,6 +32,7 @@ export function ConversationView({
   user: InboxUser | null;
   messages: DirectMessage[];
   staffIds: Set<string>;
+  staffById: Map<string, InboxUser>;
   onSend: (body: string) => Promise<void>;
   isSending: boolean;
   sendError: string | null;
@@ -67,6 +69,7 @@ export function ConversationView({
       <div className="flex-1 space-y-4 overflow-y-auto px-6 py-5">
         {messages.map((message) => {
           const fromStaff = staffIds.has(message.sender_id);
+          const author = message.sent_by ? staffById.get(message.sent_by) : undefined;
           return (
             <article
               key={message.id}
@@ -85,6 +88,7 @@ export function ConversationView({
                 )}
               >
                 {formatTimestamp(message.created_at)}
+                {author ? ` - ${text.conversation.sentByPrefix} ${displayName(author)}` : null}
               </p>
             </article>
           );

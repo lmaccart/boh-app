@@ -110,6 +110,8 @@ export function InboxPage() {
 
   const staffIds = new Set(staffQuery.data?.map((user) => user.id) ?? []);
   const staffIdFilter = Array.from(staffIds).join(",");
+  const staffById = new Map((staffQuery.data ?? []).map((user) => [user.id, user]));
+  const tarrynId = staffQuery.data?.find((user) => user.role === "tarryn")?.id ?? null;
 
   const messagesQuery = useQuery({
     queryKey: [...inboxQueryKey, "messages", staffIdFilter],
@@ -159,12 +161,16 @@ export function InboxPage() {
 
   const sendReply = useMutation({
     mutationFn: async ({ recipientId, body }: { recipientId: string; body: string }) => {
-      const senderId = session?.user.id;
-      if (!senderId) throw new Error(text.inbox.sessionRequired);
+      const adminId = session?.user.id;
+      if (!adminId) throw new Error(text.inbox.sessionRequired);
+      if (!tarrynId) throw new Error(text.inbox.tarrynAccountMissing);
 
+      // Replies are stored as the Tarryn account so the user always sees
+      // "Tarryn" (see direct_messages_staff_send_as_tarryn policy);
+      // sent_by keeps the audit trail of which admin wrote it.
       const { data, error } = await supabase
         .from("direct_messages")
-        .insert({ sender_id: senderId, recipient_id: recipientId, body })
+        .insert({ sender_id: tarrynId, recipient_id: recipientId, body, sent_by: adminId })
         .select()
         .single();
       if (error) throw error;
@@ -260,6 +266,7 @@ export function InboxPage() {
             user={selectedConversation?.user ?? null}
             messages={selectedConversation?.messages ?? []}
             staffIds={staffIds}
+            staffById={staffById}
             onSend={async (body) => {
               if (!selectedConversation) return;
               await sendReply.mutateAsync({ recipientId: selectedConversation.userId, body });
