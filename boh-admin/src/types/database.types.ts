@@ -220,6 +220,7 @@ export type Database = {
           read_at: string | null
           recipient_id: string
           sender_id: string
+          sent_by: string | null
         }
         Insert: {
           body: string
@@ -228,6 +229,7 @@ export type Database = {
           read_at?: string | null
           recipient_id: string
           sender_id: string
+          sent_by?: string | null
         }
         Update: {
           body?: string
@@ -236,6 +238,7 @@ export type Database = {
           read_at?: string | null
           recipient_id?: string
           sender_id?: string
+          sent_by?: string | null
         }
         Relationships: [
           {
@@ -248,6 +251,13 @@ export type Database = {
           {
             foreignKeyName: "direct_messages_sender_id_fkey"
             columns: ["sender_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "direct_messages_sent_by_fkey"
+            columns: ["sent_by"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
