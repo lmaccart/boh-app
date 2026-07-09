@@ -40,7 +40,12 @@ const mocks = vi.hoisted(() => ({
       read_at: "2026-07-02T10:02:00.000Z",
     },
   ],
-  insertedRows: [] as Array<{ sender_id: string; recipient_id: string; body: string }>,
+  insertedRows: [] as Array<{
+    sender_id: string;
+    recipient_id: string;
+    body: string;
+    sent_by: string;
+  }>,
   insertError: null as Error | null,
 }));
 
@@ -90,7 +95,7 @@ function mockSupabase() {
             is: () => Promise.resolve({ data: null, error: null }),
           }),
         }),
-        insert: (row: { sender_id: string; recipient_id: string; body: string }) => {
+        insert: (row: { sender_id: string; recipient_id: string; body: string; sent_by: string }) => {
           mocks.insertedRows.push(row);
           return {
             select: () => ({
@@ -152,6 +157,7 @@ test("sending a reply inserts a direct message from the current admin to the sel
         sender_id: "admin-1",
         recipient_id: "user-a",
         body: "We are here for you.",
+        sent_by: "admin-1",
       },
     ]);
   });

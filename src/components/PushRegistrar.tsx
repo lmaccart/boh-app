@@ -9,6 +9,6 @@ export function PushRegistrar() {
     registerForPushNotifications().then((result) => {
       if (result) mutate(result);
     });
-  }, []);
+  }, [mutate]);
   return null;
 }

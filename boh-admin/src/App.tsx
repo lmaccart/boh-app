@@ -5,7 +5,7 @@ import { AdminLayout } from "@/components/AdminLayout";
 import { RequireStaff } from "@/components/RequireStaff";
 import { queryClient } from "@/lib/queryClient";
 import { AnnouncementsPage } from "@/pages/AnnouncementsPage";
-import { ContentPage } from "@/pages/ContentPage";
+import { ContentPage } from "@/pages/content/ContentPage";
 import { InboxPage } from "@/pages/InboxPage";
 import { ModerationPage } from "@/pages/ModerationPage";
 import { SignInPage } from "@/pages/SignInPage";

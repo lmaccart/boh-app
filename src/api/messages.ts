@@ -25,7 +25,7 @@ export function useTarrynUser() {
   });
 }
 
-export type DmThread = {
+type DmThread = {
   otherUserId: string;
   lastMessage: DirectMessageRow;
 };

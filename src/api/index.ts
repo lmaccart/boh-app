@@ -27,6 +27,5 @@ export {
   useThread,
   useUserProfile,
   useSendMessage,
-  type DmThread,
 } from "./messages";
 export { useRegisterPushToken } from "./notifications";

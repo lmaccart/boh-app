@@ -1,0 +1,61 @@
+{
+  "planPath": "docs/superpowers/plans/2026-07-09-codebase-trim.md",
+  "tasks": [
+    {
+      "id": 1,
+      "subject": "Task 1: Untrack .claude/worktrees gitlinks and ignore .claude/",
+      "status": "completed",
+      "description": "**Goal:** Remove the two accidentally committed worktree gitlink entries (mode 160000) from the git index and prevent recurrence.\n\n**Files:**\n- Modify: `.gitignore`\n- Delete from index (not disk): `.claude/worktrees/admin-webapp-v0`, `.claude/worktrees/m5-push-notifications`\n\n**Acceptance Criteria:**\n- `git ls-files .claude` prints nothing\n- `.claude/` is gitignored\n\n**Verify:** `git ls-files .claude | wc -l` → `0`\n\n**Steps:** `git rm --cached` both gitlink paths; append `.claude/` to `.gitignore`; verify and commit. Full detail: plan Task 1.\n\n```json:metadata\n{\"files\": [\".gitignore\"], \"verifyCommand\": \"git ls-files .claude | wc -l\", \"acceptanceCriteria\": [\"git ls-files .claude is empty\", \".claude/ is gitignored\"], \"modelTier\": \"mechanical\"}\n```"
+    },
+    {
+      "id": 2,
+      "subject": "Task 2: Scope root typecheck/lint to mobile app; drop stale suppressions; fix PushRegistrar deps",
+      "status": "completed",
+      "description": "**Goal:** Make `npm run typecheck` (386 errors → 0) and `npx eslint .` (2 errors, 4 warnings → 0/0) pass by scoping them to code they can correctly check; delete dead lint suppressions.\n\n**Files:**\n- Modify: `tsconfig.json` (add exclude: node_modules, boh-admin, supabase/functions, .claude)\n- Modify: `eslint.config.js` (add ignores: supabase/functions/*, .claude/*)\n- Modify: `supabase/functions/notify/index.ts` (delete 3 stale eslint-disable lines at ~36, 65, 108)\n- Modify: `src/components/PushRegistrar.tsx:12` (deps `[]` → `[mutate]`)\n\n**Acceptance Criteria:**\n- `npx tsc --noEmit` exits 0\n- `npx eslint .` exits 0 with no errors or warnings\n- No `eslint-disable` comments remain in `supabase/functions/`\n\n**Verify:** `npm run typecheck && npx eslint . && npx jest --silent` → all silent/green (9 tests)\n\n**Steps:** exact JSON/JS blocks in plan Task 2.\n\n```json:metadata\n{\"files\": [\"tsconfig.json\", \"eslint.config.js\", \"supabase/functions/notify/index.ts\", \"src/components/PushRegistrar.tsx\"], \"verifyCommand\": \"npm run typecheck && npx eslint . && npx jest --silent\", \"acceptanceCriteria\": [\"tsc --noEmit 0 errors\", \"eslint 0 problems\", \"jest 9 passed\"], \"modelTier\": \"standard\"}\n```"
+    },
+    {
+      "id": 3,
+      "subject": "Task 3: Delete dead mobile code (PlaceholderScreen, Skeleton, unused type exports)",
+      "status": "completed",
+      "blockedBy": [
+        2
+      ],
+      "description": "**Goal:** Remove mobile source with zero importers (verified by knip + grep).\n\n**Files:**\n- Delete: `src/components/PlaceholderScreen.tsx`, `src/components/ui/Skeleton.tsx`\n- Modify: `src/components/ui/index.ts:11`, `src/api/index.ts:30`, `src/api/messages.ts:28`, `src/api/types.ts`, `src/constants/text.ts:141`, `src/theme/colors.ts:8`\n- Do NOT touch `src/types/database.types.ts` (codegen output)\n\n**Acceptance Criteria:**\n- `grep -rn \"PlaceholderScreen\\|Skeleton\" src app` returns nothing\n- `npx tsc --noEmit` exits 0\n- `npx jest` passes (9 tests)\n\n**Verify:** `npm run typecheck && npx jest --silent && npx eslint .` → all green\n\n**Steps:** full target file content in plan Task 3 (removes UserRow, PushTokenRow, CommunityPostInsert, PostReplyInsert, DirectMessageInsert, ResourceType, UserRole, AppText, Palette, DmThread barrel export; demotes DmThread in messages.ts).\n\n```json:metadata\n{\"files\": [\"src/components/PlaceholderScreen.tsx\", \"src/components/ui/Skeleton.tsx\", \"src/components/ui/index.ts\", \"src/api/index.ts\", \"src/api/messages.ts\", \"src/api/types.ts\", \"src/constants/text.ts\", \"src/theme/colors.ts\"], \"verifyCommand\": \"npm run typecheck && npx jest --silent && npx eslint .\", \"acceptanceCriteria\": [\"no PlaceholderScreen/Skeleton references\", \"tsc clean\", \"jest 9 passed\"], \"modelTier\": \"standard\"}\n```"
+    },
+    {
+      "id": 4,
+      "subject": "Task 4: Sync mobile database.types.ts with schema (missing read_at)",
+      "status": "completed",
+      "blockedBy": [
+        2
+      ],
+      "description": "**Goal:** Fix generated-type drift: migration `20260702000002_dm_read_state.sql` added `direct_messages.read_at`; the admin copy has it, the mobile copy does not.\n\n**Files:**\n- Modify: `src/types/database.types.ts` (`direct_messages` block, ~lines 215-240): add `read_at: string | null` to Row and `read_at?: string | null` to Insert and Update (between `id` and `recipient_id`)\n\n**Acceptance Criteria:**\n- `diff src/types/database.types.ts boh-admin/src/types/database.types.ts` reports no differences\n- `npm run typecheck` exits 0\n\n**Verify:** `diff src/types/database.types.ts boh-admin/src/types/database.types.ts | wc -l` → `0`, then `npm run typecheck`\n\n**Steps:** exact block in plan Task 4.\n\n```json:metadata\n{\"files\": [\"src/types/database.types.ts\"], \"verifyCommand\": \"diff src/types/database.types.ts boh-admin/src/types/database.types.ts && npm run typecheck\", \"acceptanceCriteria\": [\"files identical\", \"tsc clean\"], \"modelTier\": \"mechanical\"}\n```"
+    },
+    {
+      "id": 5,
+      "subject": "Task 5: Fix stale InboxPage test (missing sent_by)",
+      "status": "completed",
+      "description": "**Goal:** Make the admin vitest suite green. `InboxPage.tsx:173` inserts `{ sender_id: tarrynId, recipient_id, body, sent_by: adminId }` (commit 68f3744) but the test expects a 3-key payload.\n\n**Files:**\n- Modify/Test: `boh-admin/src/pages/InboxPage.test.tsx:43` (add `sent_by: string` to insertedRows mock type) and `:150-156` (add `sent_by: \"admin-1\"` to expected payload)\n\n**Acceptance Criteria:**\n- `cd boh-admin && npx vitest run` → all tests pass, 0 failed (33/33 in the user's checkout; fewer files if the untracked ContentPage.test.tsx is absent)\n- Assertion checks `sent_by` explicitly\n\n**Verify:** `cd boh-admin && npx vitest run` → 0 failed\n\n**Steps:** run the single test first (red), apply the two edits from plan Task 5, rerun full suite (green), commit.\n\n```json:metadata\n{\"files\": [\"boh-admin/src/pages/InboxPage.test.tsx\"], \"verifyCommand\": \"cd boh-admin && npx vitest run\", \"acceptanceCriteria\": [\"33/33 vitest tests pass\", \"sent_by asserted\"], \"modelTier\": \"mechanical\"}\n```"
+    },
+    {
+      "id": 6,
+      "subject": "Task 6: Delete dead admin code (PlaceholderPage, ContentPage shim)",
+      "status": "completed",
+      "blockedBy": [
+        5
+      ],
+      "description": "**Goal:** Remove the admin webapp's dead files: `PlaceholderPage.tsx` (zero importers) and the one-line `pages/ContentPage.tsx` re-export shim.\n\n**Files:**\n- Delete: `boh-admin/src/components/PlaceholderPage.tsx`, `boh-admin/src/pages/ContentPage.tsx`\n- Modify: `boh-admin/src/App.tsx:8` (import from `@/pages/content/ContentPage`)\n- Modify: `boh-admin/src/App.test.tsx:14` (vi.mock path → `@/pages/content/ContentPage`)\n\n**Acceptance Criteria:**\n- `grep -rn \"PlaceholderPage\" boh-admin/src` returns nothing; no imports of `@/pages/ContentPage` remain\n- `cd boh-admin && npx tsc -b` exits 0\n- `cd boh-admin && npx vitest run` → all tests pass, 0 failed\n\n**Verify:** `cd boh-admin && npx tsc -b && npx vitest run` → all green\n\n**Steps:** exact before/after lines in plan Task 6.\n\n```json:metadata\n{\"files\": [\"boh-admin/src/components/PlaceholderPage.tsx\", \"boh-admin/src/pages/ContentPage.tsx\", \"boh-admin/src/App.tsx\", \"boh-admin/src/App.test.tsx\"], \"verifyCommand\": \"cd boh-admin && npx tsc -b && npx vitest run\", \"acceptanceCriteria\": [\"no PlaceholderPage refs\", \"admin tsc clean\", \"33/33 tests pass\"], \"modelTier\": \"mechanical\"}\n```"
+    },
+    {
+      "id": 7,
+      "subject": "Task 7: Prune redundant npm dependencies (mobile)",
+      "status": "completed",
+      "blockedBy": [
+        2,
+        3
+      ],
+      "description": "**Goal:** Remove four package.json entries nothing imports: `expo-file-system` and three devDeps already provided transitively — `test-renderer` (dep of @testing-library/react-native@14), `react-test-renderer@19.2.3` (exact dep of jest-expo@56.0.5), `react-server-dom-webpack` (dep of expo-router and jest-expo).\n\n**Files:**\n- Modify: `package.json`, `package-lock.json` (via `npm rm expo-file-system test-renderer react-test-renderer react-server-dom-webpack`)\n\n**Acceptance Criteria:**\n- Four names gone from package.json\n- `npm ls test-renderer react-test-renderer react-server-dom-webpack` resolves all three via parents, no UNMET/invalid markers\n- `npm install` prints no unmet-peer warnings\n- `npx jest` passes (9 tests) and `npm run typecheck` exits 0\n\n**Verify:** `npx jest --silent && npm run typecheck` → green\n\n**Fallback:** if `react-server-dom-webpack` reports as unmet peer of expo-router, restore only it: `npm i -D react-server-dom-webpack@~19.2.4`, keep other removals.\n\n```json:metadata\n{\"files\": [\"package.json\", \"package-lock.json\"], \"verifyCommand\": \"npm ls test-renderer react-test-renderer react-server-dom-webpack && npx jest --silent && npm run typecheck\", \"acceptanceCriteria\": [\"4 deps removed\", \"transitive copies resolve\", \"jest 9 passed\", \"tsc clean\"], \"modelTier\": \"standard\"}\n```"
+    }
+  ],
+  "lastUpdated": "2026-07-09T15:56:15-04:00"
+}
