@@ -8,5 +8,4 @@ export { IconButton, type IconButtonProps } from "./IconButton";
 export { Input, type InputProps } from "./Input";
 export { ListItem, type ListItemProps } from "./ListItem";
 export { Modal, type ModalProps } from "./Modal";
-export { Skeleton, type SkeletonProps } from "./Skeleton";
 export { Spinner, type SpinnerProps } from "./Spinner";

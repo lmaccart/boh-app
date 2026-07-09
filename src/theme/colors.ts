@@ -5,4 +5,3 @@
 import palette from "./palette.json";
 
 export const colors = palette;
-export type Palette = typeof palette;

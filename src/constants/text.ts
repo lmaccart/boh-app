@@ -138,8 +138,6 @@ export const text = {
   },
 } as const;
 
-export type AppText = typeof text;
-
 // Lightweight {placeholder} interpolation so copy stays centralized while still
 // supporting dynamic values (e.g. the personalized welcome greeting).
 export function format(template: string, vars: Record<string, string>): string {
