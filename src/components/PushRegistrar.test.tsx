@@ -1,5 +1,7 @@
 import { render, waitFor } from "@testing-library/react-native";
 
+import { registerForPushNotifications } from "@/lib/push";
+
 import { PushRegistrar } from "./PushRegistrar";
 
 const mockMutate = jest.fn();
@@ -12,7 +14,7 @@ jest.mock("@/lib/push", () => ({
   registerForPushNotifications: jest.fn(),
 }));
 
-const { registerForPushNotifications } = require("@/lib/push");
+const mockRegisterForPushNotifications = jest.mocked(registerForPushNotifications);
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -20,13 +22,13 @@ beforeEach(() => {
 
 describe("PushRegistrar", () => {
   it("renders null", async () => {
-    registerForPushNotifications.mockResolvedValue(null);
+    mockRegisterForPushNotifications.mockResolvedValue(null);
     const { toJSON } = await render(<PushRegistrar />);
     expect(toJSON()).toBeNull();
   });
 
   it("mutates with token when permission granted", async () => {
-    registerForPushNotifications.mockResolvedValue({
+    mockRegisterForPushNotifications.mockResolvedValue({
       token: "ExponentPushToken[abc123]",
       platform: "ios",
     });
@@ -40,7 +42,7 @@ describe("PushRegistrar", () => {
   });
 
   it("does not call mutate when permission denied", async () => {
-    registerForPushNotifications.mockResolvedValue(null);
+    mockRegisterForPushNotifications.mockResolvedValue(null);
     await render(<PushRegistrar />);
     await waitFor(() => {
       expect(mockMutate).not.toHaveBeenCalled();
