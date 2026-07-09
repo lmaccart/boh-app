@@ -33,7 +33,6 @@ Deno.serve(async (req: Request) => {
   return new Response("ok", { status: 200 });
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleAnnouncement(supabase: any, record: Record<string, unknown>) {
   let audienceIds: string[];
 
@@ -62,7 +61,6 @@ async function handleAnnouncement(supabase: any, record: Record<string, unknown>
   await sendPushBatch(tokens, "Business of Happiness", body);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleCommunityPost(supabase: any, record: Record<string, unknown>) {
   const { data: poster, error: posterErr } = await supabase
     .from("users")
@@ -105,7 +103,6 @@ async function handleCommunityPost(supabase: any, record: Record<string, unknown
   await sendPushBatch(tokens, poster.name ?? "Tarryn", body);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function handleDirectMessage(supabase: any, record: Record<string, unknown>) {
   const { data: sender } = await supabase
     .from("users")
