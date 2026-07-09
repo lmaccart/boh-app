@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({ useAuth: vi.fn() }));
 vi.mock("@/pages/AnnouncementsPage", () => ({
   AnnouncementsPage: () => <div>Announcements page</div>,
 }));
-vi.mock("@/pages/ContentPage", () => ({ ContentPage: () => <div>Content page</div> }));
+vi.mock("@/pages/content/ContentPage", () => ({ ContentPage: () => <div>Content page</div> }));
 vi.mock("@/pages/InboxPage", () => ({ InboxPage: () => <div>Inbox page</div> }));
 vi.mock("@/pages/ModerationPage", () => ({ ModerationPage: () => <div>Moderation page</div> }));
 vi.mock("@/pages/WhitelistPage", () => ({ WhitelistPage: () => <div>Whitelist page</div> }));
