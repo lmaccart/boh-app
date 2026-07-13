@@ -1,7 +1,19 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WhitelistPage } from "./WhitelistPage";
+
+function renderWithClient(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      {ui}
+    </QueryClientProvider>
+  );
+}
 
 const mocks = vi.hoisted(() => {
   const coursesOrder = vi.fn();
@@ -79,7 +91,7 @@ afterEach(() => {
 });
 
 test("lists whitelisted users for the selected course", async () => {
-  render(<WhitelistPage />);
+  renderWithClient(<WhitelistPage />);
 
   expect(await screen.findByText("Student One")).toBeInTheDocument();
   expect(screen.getByText("student@example.com")).toBeInTheDocument();
@@ -91,7 +103,7 @@ test("adds an existing user by email", async () => {
     .mockResolvedValueOnce({ data: [], error: null })
     .mockResolvedValueOnce({ data: whitelistRows, error: null });
 
-  render(<WhitelistPage />);
+  renderWithClient(<WhitelistPage />);
 
   await screen.findByText("No users have access to this course yet.");
   await userEvent.type(screen.getByLabelText("User email"), "new@example.com");
@@ -106,7 +118,7 @@ test("adds an existing user by email", async () => {
 test("shows a clear error for an unmatched email", async () => {
   mocks.usersMaybeSingle.mockResolvedValue({ data: null, error: null });
 
-  render(<WhitelistPage />);
+  renderWithClient(<WhitelistPage />);
 
   await screen.findByText("Student One");
   await userEvent.type(screen.getByLabelText("User email"), "missing@example.com");
@@ -118,7 +130,11 @@ test("shows a clear error for an unmatched email", async () => {
 });
 
 test("removes a whitelisted user after confirmation", async () => {
-  render(<WhitelistPage />);
+  mocks.whitelistOrder
+    .mockResolvedValueOnce({ data: whitelistRows, error: null })
+    .mockResolvedValueOnce({ data: [], error: null });
+
+  renderWithClient(<WhitelistPage />);
 
   await screen.findByText("Student One");
   await userEvent.click(screen.getByRole("button", { name: "Remove" }));
