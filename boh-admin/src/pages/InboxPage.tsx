@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import { ConversationView, type InboxUser } from "@/components/ConversationView";
 import { text } from "@/constants/text";
+import { errorMessage } from "@/lib/error";
 import { cn } from "@/lib/cn";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/providers/AuthProvider";
@@ -33,11 +34,6 @@ function userLabel(user: InboxUser) {
   return user.name || user.email || text.common.unknownUser;
 }
 
-function errorMessage(error: unknown) {
-  if (!error) return null;
-  if (error instanceof Error) return error.message;
-  return String(error);
-}
 
 function buildConversations({
   messages,

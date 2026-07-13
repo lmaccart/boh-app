@@ -1,7 +1,19 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AnnouncementsPage } from "./AnnouncementsPage";
+
+function renderWithClient(ui: React.ReactElement) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      {ui}
+    </QueryClientProvider>
+  );
+}
 
 const mocks = vi.hoisted(() => {
   const coursesOrder = vi.fn();
@@ -68,7 +80,7 @@ test("creates a course-scoped announcement", async () => {
     .mockResolvedValueOnce({ data: [], error: null })
     .mockResolvedValueOnce({ data: existingAnnouncements, error: null });
 
-  render(<AnnouncementsPage />);
+  renderWithClient(<AnnouncementsPage />);
 
   await screen.findByText("No announcements have been published yet.");
   await userEvent.selectOptions(screen.getByLabelText("Audience"), "course-1");
@@ -87,7 +99,7 @@ test("creates a course-scoped announcement", async () => {
 test("shows Supabase insert errors", async () => {
   mocks.insert.mockResolvedValue({ error: { message: "permission denied" } });
 
-  render(<AnnouncementsPage />);
+  renderWithClient(<AnnouncementsPage />);
 
   await screen.findByText("Existing update");
   await userEvent.type(screen.getByLabelText("Message"), "New update");
@@ -97,7 +109,11 @@ test("shows Supabase insert errors", async () => {
 });
 
 test("deletes an announcement after confirmation", async () => {
-  render(<AnnouncementsPage />);
+  mocks.announcementsOrder
+    .mockResolvedValueOnce({ data: existingAnnouncements, error: null })
+    .mockResolvedValueOnce({ data: [], error: null });
+
+  renderWithClient(<AnnouncementsPage />);
 
   await screen.findByText("Existing update");
   await userEvent.click(screen.getByRole("button", { name: "Delete" }));

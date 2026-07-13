@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
+import { Button, inputClass } from "@/components/ui";
 import { text } from "@/constants/text";
+import { errorMessage } from "@/lib/error";
 import { supabase } from "@/lib/supabase";
 import type { Tables } from "@/types/database.types";
 
@@ -12,13 +13,8 @@ type PostReply = Tables<"post_replies">;
 type Profile = Tables<"profiles">;
 
 type PendingDelete =
-  { type: "post"; post: CommunityPost; replies: PostReply[] } | { type: "reply"; reply: PostReply };
-
-function errorMessage(error: unknown): string {
-  if (error instanceof Error) return error.message;
-  if (typeof error === "string") return error;
-  return text.common.somethingWentWrong;
-}
+  | { type: "post"; post: CommunityPost; replies: PostReply[] }
+  | { type: "reply"; reply: PostReply };
 
 function authorName(profiles: Map<string, Profile>, userId: string): string {
   const profile = profiles.get(userId);
@@ -193,7 +189,7 @@ export function ModerationPage() {
         </label>
         <select
           id="moderation-feed"
-          className="mt-2 w-full rounded-card border border-border bg-card px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          className={`mt-2 ${inputClass}`}
           value={selectedCourseId ?? "global"}
           onChange={(event) =>
             setSelectedCourseId(event.target.value === "global" ? null : event.target.value)
@@ -241,22 +237,22 @@ export function ModerationPage() {
             {pendingDelete.type === "post" ? text.moderation.confirmPost : text.moderation.confirmReply}
           </p>
           <div className="mt-4 flex gap-3">
-            <button
+            <Button
               type="button"
-              className="rounded-card border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-muted"
+              variant="secondary"
               onClick={() => setPendingDelete(null)}
               disabled={deleteMutation.isPending}
             >
               {text.moderation.cancel}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              className="rounded-card bg-destructive px-4 py-2 text-sm font-medium text-destructive-foreground hover:bg-destructive/90 disabled:opacity-60"
+              variant="danger"
               onClick={() => deleteMutation.mutate(pendingDelete)}
               disabled={deleteMutation.isPending}
             >
               {deleteMutation.isPending ? text.moderation.deleting : text.moderation.confirm}
-            </button>
+            </Button>
           </div>
         </div>
       ) : null}
@@ -284,13 +280,13 @@ export function ModerationPage() {
                     </h2>
                     <p className="text-xs text-muted-foreground">{formatDate(post.created_at)}</p>
                   </div>
-                  <button
+                  <Button
                     type="button"
-                    className="rounded-card border border-destructive/40 px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
+                    variant="danger"
                     onClick={() => setPendingDelete({ type: "post", post, replies })}
                   >
                     {text.moderation.deletePost}
-                  </button>
+                  </Button>
                 </div>
                 <p className="mt-4 whitespace-pre-wrap text-sm text-foreground">
                   {post.body || text.moderation.noBody}
@@ -325,13 +321,13 @@ export function ModerationPage() {
                               {formatDate(reply.created_at)}
                             </p>
                           </div>
-                          <button
+                          <Button
                             type="button"
-                            className="rounded-card border border-destructive/40 px-3 py-1.5 text-sm font-medium text-destructive hover:bg-destructive/10"
+                            variant="danger"
                             onClick={() => setPendingDelete({ type: "reply", reply })}
                           >
                             {text.moderation.deleteReply}
-                          </button>
+                          </Button>
                         </div>
                         <p className="mt-3 whitespace-pre-wrap text-sm text-foreground">
                           {reply.body || text.moderation.noBody}

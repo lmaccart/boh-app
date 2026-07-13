@@ -10,6 +10,9 @@ export type LessonResource = Tables<"lesson_resources">;
 export type SectionType = Enums<"section_type">;
 export type ResourceType = Enums<"resource_type">;
 
+export const sectionTypes = ["welcome", "content", "exam"] as const;
+export const resourceTypes = ["pdf", "worksheet", "link"] as const;
+
 export type CourseInput = Pick<TablesInsert<"courses">, "title" | "start_date">;
 export type SectionInput = Pick<
   TablesInsert<"course_sections">,
@@ -169,11 +172,11 @@ export async function uploadCourseContent(
         cacheControl: "3600",
       },
       onError: reject,
-      onProgress: (sent, total) => onProgress?.(total > 0 ? sent / total : 0),
+      onProgress: (sent: number, total: number) => onProgress?.(total > 0 ? sent / total : 0),
       onSuccess: () => resolve(),
     });
 
-    void upload.findPreviousUploads().then((prev) => {
+    void upload.findPreviousUploads().then((prev: any[]) => {
       if (prev.length) upload.resumeFromPreviousUpload(prev[0]);
       upload.start();
     });
