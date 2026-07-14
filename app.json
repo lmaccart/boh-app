@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "scheme": "bohapp",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.thebizofhappiness.app",
@@ -17,8 +16,11 @@
     },
     "android": {
       "package": "com.thebizofhappiness.app",
-      "edgeToEdgeEnabled": true,
-      "permissions": ["CAMERA", "READ_MEDIA_IMAGES", "READ_MEDIA_VIDEO"]
+      "permissions": [
+        "CAMERA",
+        "READ_MEDIA_IMAGES",
+        "READ_MEDIA_VIDEO"
+      ]
     },
     "plugins": [
       "expo-router",
@@ -38,7 +40,9 @@
         {
           "color": "#7191C6"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-asset"
     ],
     "experiments": {
       "tsconfigPaths": true
