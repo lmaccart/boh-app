@@ -2,9 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const RESEND_URL = "https://api.resend.com/emails";
 const TO_ADDRESSES = [
-  // "tarryn@drtarrynmaccarthy.com",
-  // "hereforyou@drtarrynmaccarthy.com",
-  "leif@lmgroup.dev",
+  "tarryn@drtarrynmaccarthy.com",
+  "hereforyou@drtarrynmaccarthy.com",
 ];
 
 interface WebhookPayload {
