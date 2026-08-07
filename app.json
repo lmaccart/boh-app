@@ -27,7 +27,12 @@
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
-      ]
+      ],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon-adaptive-foreground.png",
+        "backgroundColor": "#FDFCF5"
+      },
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       "expo-router",
@@ -49,7 +54,14 @@
         }
       ],
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon.png",
+          "backgroundColor": "#FDFCF5"
+        }
+      ]
     ],
     "experiments": {
       "tsconfigPaths": true

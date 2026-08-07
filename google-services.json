@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "808969908161",
+    "project_id": "boh-app-501219",
+    "storage_bucket": "boh-app-501219.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:808969908161:android:0079bee859482132fa4940",
+        "android_client_info": {
+          "package_name": "com.thebizofhappiness.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "808969908161-6p0gtc68h8nvusa1gq6ig8olrefau86k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDw7REMGYQ5uePgGZHVgWXydBL_DdqDPxU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "808969908161-6p0gtc68h8nvusa1gq6ig8olrefau86k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
