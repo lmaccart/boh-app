@@ -43,3 +43,6 @@ yarn-error.*
 
 # Claude Code session data / worktrees
 .claude/
+
+# Vercel (boh-admin deploy, rooted at repo root — see /vercel.json)
+.vercel
