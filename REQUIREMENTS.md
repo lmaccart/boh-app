@@ -4,6 +4,7 @@
 
 - iOS/Android, React, Typescript, React Native, Expo 56.0.12, Supabase, NativeWind CSS, expo-notifications
 - Supabase Auth with social SSO, user info is gathered from this
+  - Social SSO deferred to post-launch by owner decision (2026-07-14); v1 launches with email/password auth
 
 ## App reqs
 

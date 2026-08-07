@@ -1,0 +1,9 @@
+node_modules
+.claude
+ios
+android
+.expo
+dist
+web-build
+coverage
+*.log

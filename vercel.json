@@ -1,0 +1,7 @@
+{
+  "framework": null,
+  "installCommand": "npm --prefix boh-admin ci",
+  "buildCommand": "npm --prefix boh-admin run build",
+  "outputDirectory": "boh-admin/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
