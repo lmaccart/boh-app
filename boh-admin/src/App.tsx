@@ -8,6 +8,7 @@ import { AnnouncementsPage } from "@/pages/AnnouncementsPage";
 import { ContentPage } from "@/pages/content/ContentPage";
 import { InboxPage } from "@/pages/InboxPage";
 import { ModerationPage } from "@/pages/ModerationPage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 import { SignInPage } from "@/pages/SignInPage";
 import { WhitelistPage } from "@/pages/WhitelistPage";
 import { AuthProvider } from "@/providers/AuthProvider";
@@ -27,6 +28,7 @@ export default function App() {
                 <Route path="/whitelist" element={<WhitelistPage />} />
                 <Route path="/announcements" element={<AnnouncementsPage />} />
                 <Route path="/moderation" element={<ModerationPage />} />
+                <Route path="*" element={<NotFoundPage />} />
               </Route>
             </Route>
           </Routes>

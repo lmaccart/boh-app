@@ -60,3 +60,22 @@ test("signed-out users land on the sign-in page", async () => {
     await screen.findByRole("button", { name: text.signIn.googleButton }),
   ).toBeInTheDocument();
 });
+
+test("staff hitting an unknown route see the 404 page inside the layout", async () => {
+  mocks.useAuth.mockReturnValue({ status: "staff", signOut: vi.fn() });
+  window.history.pushState({}, "", "/does-not-exist");
+  render(<App />);
+
+  expect(await screen.findByRole("heading", { name: text.notFound.title })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: text.nav.inbox })).toBeInTheDocument();
+});
+
+test("signed-out users hitting an unknown route are sent to sign-in", async () => {
+  mocks.useAuth.mockReturnValue({ status: "signed-out", signOut: vi.fn() });
+  window.history.pushState({}, "", "/does-not-exist");
+  render(<App />);
+
+  expect(
+    await screen.findByRole("button", { name: text.signIn.googleButton }),
+  ).toBeInTheDocument();
+});

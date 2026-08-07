@@ -30,6 +30,12 @@ export const text = {
   placeholder: {
     comingSoon: "This section is coming soon.",
   },
+  notFound: {
+    code: "404",
+    title: "Page not found",
+    body: "The page you are looking for does not exist or has moved.",
+    backToInbox: "Go to Inbox",
+  },
   inbox: {
     title: "Tarryn Inbox",
     subtitle: "Read and reply to Reach Out Here direct messages.",
