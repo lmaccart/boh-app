@@ -1,0 +1,129 @@
+# Gated deploy for the boh-admin portal.
+#
+# Tests run first; nothing reaches Vercel unless they pass. Pull requests get a
+# preview URL, pushes to main go straight to production. Only paths that affect
+# the admin build trigger this -- mobile-app-only commits are ignored.
+#
+# Required repository secrets (Settings > Secrets and variables > Actions):
+#   VERCEL_TOKEN       - account or team token from vercel.com/account/tokens
+#   VERCEL_ORG_ID      - "orgId" in .vercel/project.json (gitignored, read it locally)
+#   VERCEL_PROJECT_ID  - "projectId" in the same file
+name: Deploy admin portal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "boh-admin/**"
+      - "vercel.json"
+      - ".github/workflows/deploy-admin.yml"
+  pull_request:
+    paths:
+      - "boh-admin/**"
+      - "vercel.json"
+      - ".github/workflows/deploy-admin.yml"
+
+# A newer commit on the same branch makes an in-flight run obsolete. Production
+# runs are never cancelled, so main always finishes what it started.
+concurrency:
+  group: deploy-admin-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  # Pinned deliberately: an unpinned CLI can change build behaviour without a
+  # commit in this repo.
+  VERCEL_CLI_VERSION: vercel@58.8.0
+
+jobs:
+  test:
+    name: Typecheck, lint, test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Matches the nodeVersion configured on the Vercel project.
+          node-version: 24
+          cache: npm
+          cache-dependency-path: boh-admin/package-lock.json
+
+      - run: npm --prefix boh-admin ci
+
+      - run: npm --prefix boh-admin run typecheck
+
+      - run: npm --prefix boh-admin run lint
+
+      - run: npm --prefix boh-admin test
+
+  deploy:
+    name: Deploy to Vercel
+    needs: test
+    runs-on: ubuntu-latest
+    # Fork PRs cannot read secrets, so skip rather than fail a red X onto them.
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: read
+      pull-requests: write
+    environment:
+      name: ${{ github.event_name == 'push' && 'production' || 'preview' }}
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install Vercel CLI
+        run: npm install -g ${{ env.VERCEL_CLI_VERSION }}
+
+      # Everything below keys off this one variable, so the preview and
+      # production paths cannot drift apart.
+      - name: Resolve deploy target
+        id: target
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "flag=--prod" >> "$GITHUB_OUTPUT"
+            echo "environment=production" >> "$GITHUB_OUTPUT"
+          else
+            echo "flag=" >> "$GITHUB_OUTPUT"
+            echo "environment=preview" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pull Vercel project settings
+        run: >-
+          vercel pull --yes
+          --environment=${{ steps.target.outputs.environment }}
+          --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build
+        run: vercel build ${{ steps.target.outputs.flag }} --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy prebuilt output
+        id: deploy
+        run: >-
+          echo "url=$(vercel deploy --prebuilt ${{ steps.target.outputs.flag }}
+          --token=${{ secrets.VERCEL_TOKEN }})" >> "$GITHUB_OUTPUT"
+
+      - name: Comment preview URL on the pull request
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+        with:
+          script: |
+            const url = process.env.PREVIEW_URL;
+            const marker = "<!-- boh-admin-preview -->";
+            const body = `${marker}\nAdmin portal preview: ${url}`;
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.rest.issues.listComments({ owner, repo, issue_number });
+            const existing = comments.data.find((c) => c.body?.startsWith(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
