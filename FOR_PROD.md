@@ -1,38 +1,14 @@
 # Remaining before store submission
 
-Status as of 2026-08-07: Tasks 1-4, 6, 7, 8 of
-`docs/superpowers/plans/2026-07-14-launch-readiness.md` are done. Two remain.
+Status as of 2026-08-08: Tasks 1-4, 6, 7, 8 of
+`docs/superpowers/plans/2026-07-14-launch-readiness.md` are done. Task 5 is
+done in its v1 form (see `docs/superpowers/plans/2026-08-08-v1-no-email-provider.md`
+— Reach Out Here ships in-app only for v1, no email provider configured).
+One task remains.
 
-## Task 5: Set Supabase secrets and deploy edge functions — BLOCKED ON USER
+## Task 9: Production builds and launch verification
 
-Not started. Blocked on inputs only the user has:
-
-- [ ] FunnelBreezy inbound-webhook URL for the reach-out-email workflow (no
-      public API — this is a per-workflow URL from the FunnelBreezy dashboard)
-- [ ] A verified Resend sender address/domain
-- [ ] Confirmation of whether `RESEND_API_KEY` is already set as a Supabase
-      secret, or still needs to be added
-
-Once those are known:
-1. Confirm `supabase login` session is valid (`supabase projects list` —
-   already confirmed working 2026-08-07, may still be valid)
-2. Show the user the exact commands before running anything remote
-   (STANDING RULE: explicit approval required before any deploy to the
-   remote Supabase project — see memory `test-against-remote-supabase`):
-   - `supabase secrets set EMAIL_PROVIDER=funnelbreezy FUNNELBREEZY_WEBHOOK_URL=<url> RESEND_API_KEY=<key> RESEND_FROM=<verified address>`
-   - `supabase functions deploy reach-out-email`
-   - `supabase functions deploy notify`
-3. Verify: `supabase secrets list` shows all four; `supabase functions list`
-   shows both ACTIVE with today's deploy date
-4. Live smoke check: user sends a Reach Out message from the app, confirms
-   email arrives at both tarryn@drtarrynmaccarthy.com and
-   hereforyou@drtarrynmaccarthy.com
-5. Rollback path if FunnelBreezy misbehaves: `supabase secrets set EMAIL_PROVIDER=resend`
-   (read per-request, no redeploy needed)
-
-## Task 9: Production builds and launch verification — BLOCKED ON TASK 5
-
-Not started; needs Task 5 done first. Then:
+Not started. Needs:
 
 - [ ] `eas build --platform ios --profile production` and
       `eas build --platform android --profile production` — both green
@@ -44,7 +20,8 @@ Not started; needs Task 5 done first. Then:
       accounts, on real devices:
   - [ ] Sign-in works on both platforms
   - [ ] A DM from another account produces a push notification (app backgrounded)
-  - [ ] Reach Out Here produces an email at both drtarrynmaccarthy.com addresses
+  - [ ] Reach Out Here message appears in the admin/Tarryn in-app inbox
+        (no email is sent for v1 — this is expected, see REQUIREMENTS.md)
   - [ ] An announcement posted from https://boh-admin.vercel.app produces a
         push on both devices
 - [ ] Do not submit for store review with any of the above failing
@@ -61,5 +38,8 @@ Not started; needs Task 5 done first. Then:
 
 - [ ] Implement social SSO (deferred 2026-07-14 by owner decision — see
       REQUIREMENTS.md)
-- [ ] Watch FunnelBreezy email delivery; flip `EMAIL_PROVIDER=resend` if it
-      misbehaves
+- [ ] Add an email provider for Reach Out Here (deferred 2026-08-08 by owner
+      decision — see REQUIREMENTS.md). To enable: `supabase secrets set
+      EMAIL_PROVIDER=resend` (Resend secrets are already set, just dormant) or
+      `EMAIL_PROVIDER=funnelbreezy` plus `FUNNELBREEZY_WEBHOOK_URL`; no
+      redeploy needed, env is read per-request.

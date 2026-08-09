@@ -56,7 +56,7 @@ Deno.serve(async (req: Request) => {
       "Reply in the app to respond.",
     ].join("\n");
 
-    const provider = Deno.env.get("EMAIL_PROVIDER") ?? "resend";
+    const provider = Deno.env.get("EMAIL_PROVIDER");
 
     if (provider === "funnelbreezy") {
       const res = await fetch(Deno.env.get("FUNNELBREEZY_WEBHOOK_URL")!, {
@@ -74,7 +74,7 @@ Deno.serve(async (req: Request) => {
       if (!res.ok) {
         console.error("FunnelBreezy error:", await res.text());
       }
-    } else {
+    } else if (provider === "resend") {
       const res = await fetch(RESEND_URL, {
         method: "POST",
         headers: {
@@ -92,6 +92,10 @@ Deno.serve(async (req: Request) => {
       if (!res.ok) {
         console.error("Resend error:", await res.text());
       }
+    } else {
+      // v1 ships without an email provider (owner decision, 2026-08-08); the
+      // message is already delivered in-app via the direct_messages insert.
+      console.log("reach-out-email: no EMAIL_PROVIDER configured, skipping send");
     }
   } catch (err) {
     console.error("reach-out-email error:", err);
