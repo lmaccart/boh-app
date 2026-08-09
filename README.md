@@ -29,7 +29,7 @@ boh-app/
 
 - **Mobile:** React Native 0.85, React 19, Expo 56, expo-router, TypeScript, NativeWind (Tailwind), TanStack Query v5, expo-notifications, expo-video / expo-audio
 - **Admin portal:** Vite, React 19, TypeScript, Tailwind, TanStack Query, react-router, Vitest
-- **Backend:** Supabase (Postgres, Auth, Storage, Edge Functions, Database Webhooks) with Resend for outbound email
+- **Backend:** Supabase (Postgres, Auth, Storage, Edge Functions, Database Webhooks); outbound email (Resend/FunnelBreezy) deferred post-launch — see REQUIREMENTS.md
 
 Both clients share one Supabase project, the generated `database.types.ts`, and the color palette in `src/theme/palette.json` (consumed by both `colors.ts` and each app's Tailwind config).
 
@@ -45,7 +45,7 @@ Course access is whitelist-gated (`course_whitelist` table, enforced by RLS). Ea
 An app-wide "Business of Happiness" community (all users auto-whitelisted) plus per-course communities. Users post text, photos, and video, reply to topics, and tag other users with mentions. Tapping a name or mention opens a direct message thread.
 
 ### Direct Messages and "Reach Out Here"
-The DM inbox always shows a Reach Out Here button that messages Tarryn. Behind the scenes the thread is visible to all staff, and a database webhook fires the `reach-out-email` edge function, which forwards the message via Resend to `tarryn@drtarrynmaccarthy.com` and `hereforyou@drtarrynmaccarthy.com`. Staff replies from the admin portal are sent as the Tarryn account (RLS policy `direct_messages_staff_send_as_tarryn`).
+The DM inbox always shows a Reach Out Here button that messages Tarryn. The thread is visible to all staff in-app. The `reach-out-email` edge function exists to forward the message via email to `tarryn@drtarrynmaccarthy.com` and `hereforyou@drtarrynmaccarthy.com`, but is disabled for v1 (`EMAIL_PROVIDER=none`) by owner decision — see REQUIREMENTS.md. Staff replies from the admin portal are sent as the Tarryn account (RLS policy `direct_messages_staff_send_as_tarryn`).
 
 ### Resources
 Personal library of favorited clips, audios, PDFs, and lessons, sorted and filterable by type.
@@ -96,7 +96,7 @@ supabase functions deploy notify
 supabase functions deploy reach-out-email
 ```
 
-`reach-out-email` requires `RESEND_API_KEY` and `RESEND_FROM` (a verified Resend domain) as function secrets, plus database webhooks wired to the `direct_messages`, `announcements`, and `community_posts` tables. Production setup steps are tracked in `FOR_PROD.md`.
+`reach-out-email` is disabled for v1 (`EMAIL_PROVIDER=none`, see REQUIREMENTS.md). To re-enable post-launch: set `EMAIL_PROVIDER=resend` plus `RESEND_API_KEY`/`RESEND_FROM` (already set as dormant secrets), or `EMAIL_PROVIDER=funnelbreezy` plus `FUNNELBREEZY_WEBHOOK_URL`, then redeploy. The `notify` push function and its `announcements`/`community_posts`/`direct_messages` triggers are unaffected.
 
 ## Documentation
 

@@ -11,7 +11,7 @@
 **User decisions (already made):**
 - Social SSO is deferred post-launch; the app launches with email/password auth. This is an approved deviation from REQUIREMENTS.md ("Supabase Auth with social SSO"), consented 2026-07-14.
 - Both iOS and Android ship at launch (Android native project, FCM push, and Play Store setup are in scope).
-- Production email path is FunnelBreezy (`EMAIL_PROVIDER=funnelbreezy`); Resend stays configured as fallback.
+- Production email path is FunnelBreezy (`EMAIL_PROVIDER=funnelbreezy`); Resend stays configured as fallback. **Superseded 2026-08-08:** v1 ships with no email provider at all — see `docs/superpowers/plans/2026-08-08-v1-no-email-provider.md`.
 - Standing instruction (memory): anything that deploys to the remote Supabase project requires explicit user approval before the command is run.
 
 **Sweep findings this plan fixes:**
@@ -308,6 +308,8 @@ git commit -m "chore(eas): embed Supabase public env vars in preview and product
 
 ### Task 5: Set Supabase secrets and deploy edge functions (USER APPROVAL REQUIRED)
 
+> **Superseded 2026-08-08** — see `docs/superpowers/plans/2026-08-08-v1-no-email-provider.md`. v1 ships with `EMAIL_PROVIDER=none`; the FunnelBreezy/Resend setup steps below were not carried out.
+
 **Goal:** The remote Supabase project has `EMAIL_PROVIDER=funnelbreezy`, the FunnelBreezy webhook URL, and Resend fallback secrets set, and both edge functions (`notify`, `reach-out-email`) are deployed at their current code.
 
 **Files:**
@@ -530,7 +532,7 @@ git commit -m "docs: record SSO deferral and refresh pre-launch checklist"
 **Acceptance Criteria:**
 - [ ] `eas build --platform ios --profile production` and `eas build --platform android --profile production` both finish green
 - [ ] The iOS .ipa's entitlements show `aps-environment: production` (the committed entitlements file says `development`; distribution signing must swap it — this checks that it actually did)
-- [ ] On a real iOS device (TestFlight) and a real Android device (Play internal testing): sign in works, a DM sent from another account produces a push notification, and "Reach Out Here" produces an email at both drtarrynmaccarthy.com addresses
+- [ ] On a real iOS device (TestFlight) and a real Android device (Play internal testing): sign in works, a DM sent from another account produces a push notification, and "Reach Out Here" delivers the message to the admin/Tarryn in-app inbox (no email — deferred post-launch, see REQUIREMENTS.md)
 - [ ] An announcement posted from the admin portal produces a push on both devices
 
 **Verify:** `codesign -d --entitlements - <extracted .app>` → contains `aps-environment` = `production`; plus the on-device observations above.
@@ -565,7 +567,7 @@ Expected: `production`. If it says `development`, the provisioning profile is wr
 On each device, with two accounts:
 1. Sign in → home screen greets by name.
 2. Account B sends account A a DM → A receives a push (app backgrounded).
-3. A taps "Reach Out Here", sends a message → user confirms email arrived at both Tarryn inboxes.
+3. A taps "Reach Out Here", sends a message → user confirms it appears in the admin/Tarryn in-app inbox (no email for v1).
 4. Post an announcement from the deployed admin portal → both devices receive a push.
 
 Record each observation (screenshot or note) before calling this task done. If any check fails, debug before proceeding — do not submit for review with failing checks.

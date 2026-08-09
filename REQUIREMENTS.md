@@ -30,6 +30,7 @@
   - Upon this inbox recieving a message, send the message to <tarryn@drtarrynmaccarthy.com> and <hereforyou@drtarrynmaccarthy.com>
     - this is one way, and can be done via email or in the app, and the user will receive a notification when Tarryn/admin responds (which they will do via the app)
     - done with a supabase function that calls an email provider
+    - Email delivery deferred to post-launch by owner decision (2026-08-08); v1 delivers Reach Out Here messages in-app only (admin/Tarryn DM inbox), no outbound email to either address
 
 ### Course Access
 
